@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String
+  role      String   @default("USER")
+  createdAt DateTime @default(now())
+
+  scratchCards ScratchCard[]
+  coupons      Coupon[]
+}
+
+model Campaign {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  prizes       Prize[]
+  scratchCards ScratchCard[]
+}
+
+model Prize {
+  id          String @id @default(cuid())
+  name        String
+  discount    Int
+  probability Int
+
+  campaignId String
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+
+  coupons      Coupon[]
+  scratchCards ScratchCard[]
+}
+
+model ScratchCard {
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  campaignId String
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+
+  prizeId String?
+  prize   Prize?  @relation(fields: [prizeId], references: [id])
+
+  scratched Boolean @default(false)
+
+  createdAt DateTime @default(now())
+}
+
+model Coupon {
+  id String @id @default(cuid())
+
+  code String @unique
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  prizeId String
+  prize   Prize  @relation(fields: [prizeId], references: [id])
+
+  used Boolean @default(false)
+
+  createdAt DateTime @default(now())
+}
