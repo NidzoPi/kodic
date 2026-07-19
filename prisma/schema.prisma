@@ -14,6 +14,13 @@ model User {
   role      String   @default("USER")
   createdAt DateTime @default(now())
 
+  referralCode String @unique @default(cuid())
+  referredById String?
+  referredBy   User? @relation("UserReferrals", fields: [referredById], references: [id])
+  referrals    User[] @relation("UserReferrals")
+
+  extraScratches Int @default(0)
+
   scratchCards ScratchCard[]
   coupons      Coupon[]
 }
