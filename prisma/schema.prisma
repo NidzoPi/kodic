@@ -14,7 +14,7 @@ model User {
   role      String   @default("USER")
   createdAt DateTime @default(now())
 
-  referralCode String @unique @default(cuid())
+  referralCode String? @unique
   referredById String?
   referredBy   User? @relation("UserReferrals", fields: [referredById], references: [id])
   referrals    User[] @relation("UserReferrals")
