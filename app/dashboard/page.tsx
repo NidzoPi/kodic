@@ -14,11 +14,12 @@ type DashboardData = {
   coupons: number;
   scratchCards: number;
   canScratch: boolean;
+  availableCards: number;
 };
 
 export default function DashboardPage() {
   const router = useRouter();
-
+  const [showScratchResult, setShowScratchResult] = useState(false);
   const [data, setData] = useState<DashboardData | null>(null);
 
   async function loadDashboard() {
@@ -99,9 +100,34 @@ export default function DashboardPage() {
               🎁 Grebanje
             </h2>
 
-            {data.canScratch || data.extraScratches > 0 ? (
-              <ScratchCard onScratchComplete={loadDashboard} />
+            {data.availableCards === 0 && !showScratchResult ? (
+
+              <div className="bg-gray-100 p-6 rounded-xl text-center">
+                <h3 className="text-xl font-bold">
+                  🎫 NEMA DOSTUPNIH KARTICA
+                </h3>
+
+                <p className="text-gray-500 mt-2">
+                  Trenutno nema dostupnih grebanja.
+                </p>
+              </div>
+
+
+            ) : data.canScratch || data.extraScratches > 0 ? (
+
+              <ScratchCard
+                onScratchComplete={async () => {
+                  //setShowScratchResult(true);
+                  await loadDashboard();
+                }}
+                onNewScratch={() => {
+                  setShowScratchResult(false);
+                }}
+              />
+
+
             ) : (
+
               <div className="bg-gray-100 p-6 rounded-xl text-center">
                 <h3 className="text-xl font-bold">
                   ⏳ Već ste iskoristili današnje grebanje
@@ -111,6 +137,7 @@ export default function DashboardPage() {
                   Novo grebanje dostupno sutra
                 </p>
               </div>
+
             )}
 
           </div>

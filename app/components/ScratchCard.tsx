@@ -4,12 +4,14 @@ import { useState } from "react";
 
 
 type Props = {
-    onScratchComplete?: () => Promise<void>;
+    onScratchComplete?: () => void | Promise<void>;
+    onNewScratch?: () => void;
 };
 
 
 export default function ScratchCard({
-    onScratchComplete
+    onScratchComplete,
+    onNewScratch
 }: Props) {
     {
 
@@ -33,9 +35,11 @@ export default function ScratchCard({
 
             setResult(data);
 
-            if (res.ok && onScratchComplete) {
-                await onScratchComplete();
-            }
+            /*if (res.ok && onScratchComplete) {
+                setTimeout(() => {
+                    onScratchComplete();
+                }, 1000);
+            }*/
 
             setScratched(true);
 
@@ -109,20 +113,19 @@ export default function ScratchCard({
 
                             <button
                                 onClick={() => {
-
-                                    setScratched(false);
                                     setResult(null);
-
+                                    setScratched(false);
+                                    onScratchComplete?.();
                                 }}
                                 className="
-                mt-6
-                bg-white
-                text-purple-700
-                font-bold
-                px-6
-                py-3
-                rounded-lg
-            "
+        mt-6
+        bg-purple-600
+        text-white
+        px-6
+        py-3
+        rounded-lg
+        font-bold
+    "
                             >
                                 NOVO GREBANJE
                             </button>

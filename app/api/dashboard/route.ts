@@ -48,6 +48,12 @@ export async function GET() {
 
     const dailyScratchAvailable = !todayScratch;
 
+    const availableCards = await prisma.scratchCard.count({
+        where: {
+            scratched: false
+        }
+    });
+
 
 
     return NextResponse.json({
@@ -67,6 +73,8 @@ export async function GET() {
         dailyScratchAvailable,
 
         canScratch,
+
+        availableCards: availableCards,
 
     });
 
