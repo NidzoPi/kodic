@@ -1,104 +1,242 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { generateCouponCode } from "@/lib/utils/coupon";
+import { getCurrentUser } from "@/lib/auth/currentUser";
+
 
 export async function POST() {
-  try {
 
-    // test korisnik
+    const currentUser = await getCurrentUser();
+
+
+    if (!currentUser) {
+
+        return NextResponse.json(
+            {
+                error: "Unauthorized"
+            },
+            {
+                status: 401
+            }
+        );
+
+    }
+
+
     const user = await prisma.user.findUnique({
-      where: {
-        email: "test@test.com",
-      },
+        where: {
+            id: currentUser.id
+        }
     });
 
+
     if (!user) {
-      return NextResponse.json(
-        { error: "Korisnik ne postoji" },
-        { status: 404 }
-      );
+
+        return NextResponse.json(
+            {
+                error: "Korisnik ne postoji"
+            },
+            {
+                status: 404
+            }
+        );
+
+    }
+
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+
+    const todayScratch =
+        await prisma.scratchCard.findFirst({
+
+            where: {
+                userId: user.id,
+                createdAt: {
+                    gte: startOfDay
+                }
+            }
+
+        });
+
+
+    if (todayScratch && user.extraScratches <= 0) {
+
+        return NextResponse.json(
+            {
+                error: "Već ste iskoristili današnje grebanje"
+            },
+            {
+                status: 400
+            }
+        );
+
     }
 
 
     // aktivna kampanja
-    const campaign = await prisma.campaign.findFirst({
-      where: {
-        active: true,
-      },
-      include: {
-        prizes: true,
-      },
-    });
+
+    const campaigns =
+        await prisma.campaign.findMany({
+
+            where: {
+                active: true,
+
+                scratchCards: {
+                    some: {
+                        scratched: false
+                    }
+                }
+
+            }
+
+        });
+
+
+    if (campaigns.length === 0) {
+
+        return NextResponse.json(
+            {
+                error: "Nema dostupnih kampanja"
+            },
+            {
+                status: 400
+            }
+        );
+
+    }
+
+
+    const campaign =
+        campaigns[
+        Math.floor(Math.random() * campaigns.length)
+        ];
+
 
 
     if (!campaign) {
-      return NextResponse.json(
-        { error: "Nema aktivne kampanje" },
-        { status: 404 }
-      );
+
+        return NextResponse.json(
+            {
+                error: "Nema aktivne kampanje",
+                debug: "campaign null"
+            },
+            {
+                status: 400
+            }
+        );
+
     }
 
+    console.log("Campaign ID:", campaign.id);
 
-    // izbor nagrade po vjerovatnoći
-    const random = Math.floor(Math.random() * 100) + 1;
-
-    let total = 0;
-    let selectedPrize = null;
-
-
-    for (const prize of campaign.prizes) {
-      total += prize.probability;
-
-      if (random <= total) {
-        selectedPrize = prize;
-        break;
-      }
-    }
-
-
-    if (!selectedPrize) {
-      return NextResponse.json(
-        { error: "Greška kod izbora nagrade" },
-        { status: 500 }
-      );
-    }
-
-
-    // kreiranje scratch kartice
-    const scratchCard = await prisma.scratchCard.create({
-      data: {
-        userId: user.id,
-        campaignId: campaign.id,
-        prizeId: selectedPrize.id,
-        scratched: true,
-      },
+    const cards = await prisma.scratchCard.findMany({
+        where: {
+            campaignId: campaign.id,
+        },
     });
 
-    const coupon = await prisma.coupon.create({
-      data: {
-        code: generateCouponCode(selectedPrize.discount),
-        userId: user.id,
-        prizeId: selectedPrize.id,
-      },
-    });
+    console.log(cards);
+
+
+
+    const scratchCard =
+        await prisma.scratchCard.findFirst({
+
+            where: {
+                campaignId: campaign.id,
+                userId: null,
+                scratched: false
+            }
+
+        });
+
+
+
+    if (!scratchCard) {
+
+        return NextResponse.json(
+            {
+                error: "Nema dostupnih grebanja",
+                debug: "cards empty"
+            },
+            {
+                status: 400
+            }
+        );
+
+    }
+
+
+
+    const updatedCard =
+        await prisma.scratchCard.update({
+
+            where: {
+                id: scratchCard.id
+            },
+
+            data: {
+                userId: user.id,
+                scratched: true
+            }
+
+        });
+
+    if (todayScratch && user.extraScratches > 0) {
+
+        await prisma.user.update({
+
+            where: {
+                id: user.id
+            },
+
+            data: {
+                extraScratches: {
+                    decrement: 1
+                }
+            }
+
+        });
+
+    }
+
+    const coupon =
+        await prisma.coupon.create({
+
+            data: {
+
+                code:
+                    "SCR-" +
+                    Math.random()
+                        .toString(36)
+                        .substring(2, 10)
+                        .toUpperCase(),
+
+                userId: user.id,
+
+                campaignId: campaign.id,
+
+                scratchCardId: updatedCard.id,
+
+                discount: updatedCard.discount
+
+            }
+
+        });
+
 
 
     return NextResponse.json({
-      success: true,
-      message: "Čestitamo!",
-      prize: selectedPrize.name,
-      discount: selectedPrize.discount,
-      coupon: coupon.code,
-      scratchCardId: scratchCard.id,
+
+        message: "Grebanje uspješno",
+
+        discount: updatedCard.discount,
+
+        coupon: coupon.code,
+
+        scratchCardId: updatedCard.id
+
     });
 
 
-  } catch (error) {
-    console.error(error);
-
-    return NextResponse.json(
-      { error: "Server greška" },
-      { status: 500 }
-    );
-  }
 }

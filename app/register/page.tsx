@@ -1,12 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 
-export default function RegisterPage() {
+function RegisterForm() {
 
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+
+  const referralCode = searchParams.get("ref");
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -36,6 +41,7 @@ export default function RegisterPage() {
           name,
           email,
           password,
+          referralCode,
         }),
       }
     );
@@ -148,4 +154,11 @@ export default function RegisterPage() {
 
   );
 
+}
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div>Učitavanje...</div>}>
+      <RegisterForm />
+    </Suspense>
+  );
 }

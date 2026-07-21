@@ -6,18 +6,23 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
   id        String   @id @default(cuid())
   name      String?
   email     String   @unique
   password  String
-  role      String   @default("USER")
+  role      Role     @default(USER)
   createdAt DateTime @default(now())
 
   referralCode String? @unique
   referredById String?
-  referredBy   User? @relation("UserReferrals", fields: [referredById], references: [id])
-  referrals    User[] @relation("UserReferrals")
+  referredBy   User?   @relation("UserReferrals", fields: [referredById], references: [id])
+  referrals    User[]  @relation("UserReferrals")
 
   extraScratches Int @default(0)
 
@@ -26,40 +31,30 @@ model User {
 }
 
 model Campaign {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
-
-  prizes       Prize[]
-  scratchCards ScratchCard[]
-}
-
-model Prize {
-  id          String @id @default(cuid())
-  name        String
-  discount    Int
-  probability Int
-
-  campaignId String
-  campaign   Campaign @relation(fields: [campaignId], references: [id])
-
-  coupons      Coupon[]
-  scratchCards ScratchCard[]
+  id            String        @id @default(cuid())
+  name          String
+  description   String?
+  discount      Int
+  totalCoupons  Int
+  issuedCoupons Int           @default(0)
+  active        Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+  scratchCards  ScratchCard[]
+  coupons       Coupon[]
 }
 
 model ScratchCard {
   id String @id @default(cuid())
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
   campaignId String
   campaign   Campaign @relation(fields: [campaignId], references: [id])
 
-  prizeId String?
-  prize   Prize?  @relation(fields: [prizeId], references: [id])
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+
+  discount Int
+
+  coupon Coupon?
 
   scratched Boolean @default(false)
 
@@ -74,8 +69,13 @@ model Coupon {
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
-  prizeId String
-  prize   Prize  @relation(fields: [prizeId], references: [id])
+  campaignId String
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+
+  scratchCardId String      @unique
+  scratchCard   ScratchCard @relation(fields: [scratchCardId], references: [id])
+
+  discount Int
 
   used Boolean @default(false)
 
