@@ -15,6 +15,7 @@ type DashboardData = {
   scratchCards: number;
   canScratch: boolean;
   availableCards: number;
+  availableScratches: number;
 };
 
 export default function DashboardPage() {
@@ -74,19 +75,19 @@ export default function DashboardPage() {
 
       <div className="max-w-5xl mx-auto">
 
-        <h1 className="text-4xl font-bold mb-8">
+        <h1 className="text-4xl font-bold text-gray-400 mb-8">
           Dobrodošao {data.name ?? "korisniče"} 👋
         </h1>
 
         <div className="grid md:grid-cols-2 gap-6">
 
           <div className="bg-white rounded-xl shadow p-6">
-            <h2 className="text-xl font-semibold mb-2">
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">
               🎫 Dostupna grebanja
             </h2>
 
-            <p className="text-3xl font-bold">
-              {(data.canScratch ? 1 : 0) + data.extraScratches}
+            <p className="text-3xl font-bold text-gray-500 text-gray-500 text-gray-500">
+              {data.availableScratches}
             </p>
 
             <p className="text-gray-500 mt-2">
@@ -96,11 +97,11 @@ export default function DashboardPage() {
 
           <div className="bg-white rounded-xl shadow p-6">
 
-            <h2 className="text-xl font-semibold mb-4">
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">
               🎁 Grebanje
             </h2>
 
-            {data.availableCards === 0 && !showScratchResult ? (
+            {data.availableCards === 0 && data.extraScratches <= 0 && !showScratchResult ? (
 
               <div className="bg-gray-100 p-6 rounded-xl text-center">
                 <h3 className="text-xl font-bold">
@@ -117,7 +118,6 @@ export default function DashboardPage() {
 
               <ScratchCard
                 onScratchComplete={async () => {
-                  //setShowScratchResult(true);
                   await loadDashboard();
                 }}
                 onNewScratch={() => {
@@ -140,21 +140,23 @@ export default function DashboardPage() {
 
             )}
 
+
+
           </div>
 
           <div className="bg-white rounded-xl shadow p-6">
-            <h2 className="text-xl font-semibold mb-2">
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">
               👥 Pozvani prijatelji
             </h2>
 
-            <p className="text-3xl font-bold">
+            <p className="text-3xl font-bold text-gray-500 text-gray-500 text-gray-500">
               {data.referrals}
             </p>
           </div>
 
           <div className="bg-white rounded-xl shadow p-6">
 
-            <h2 className="text-xl font-semibold mb-4">
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">
               🔗 Referral link
             </h2>
 
@@ -175,11 +177,11 @@ export default function DashboardPage() {
 
           <div className="bg-white rounded-xl shadow p-6">
 
-            <h2 className="text-xl font-semibold mb-2">
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">
               🎁 Kuponi
             </h2>
 
-            <p className="text-3xl font-bold">
+            <p className="text-3xl font-bold text-gray-500 text-gray-500 text-gray-500">
               {data.coupons}
             </p>
 

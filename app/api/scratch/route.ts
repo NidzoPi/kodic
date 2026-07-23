@@ -41,7 +41,6 @@ export async function POST() {
         );
 
     }
-
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
 
@@ -58,7 +57,6 @@ export async function POST() {
 
         });
 
-
     if (todayScratch && user.extraScratches <= 0) {
 
         return NextResponse.json(
@@ -73,6 +71,7 @@ export async function POST() {
     }
 
 
+
     // aktivna kampanja
 
     const campaigns =
@@ -85,18 +84,42 @@ export async function POST() {
                     some: {
                         scratched: false
                     }
+                },
+                NOT: {
+                    coupons: {
+                        some: {
+                            userId: user.id
+                        }
+                    }
                 }
 
             }
 
         });
+    const userCoupons = await prisma.coupon.findMany({
+        where: {
+            userId: user.id
+        },
+        select: {
+            campaignId: true
+        }
+    });
+
+    console.log(
+        "Korisnik vec ima kupone:",
+        userCoupons
+    );
+    console.log(
+        "Dostupne kampanje za korisnika:",
+        campaigns.map(c => c.id)
+    );
 
 
     if (campaigns.length === 0) {
 
         return NextResponse.json(
             {
-                error: "Nema dostupnih kampanja"
+                error: "Već ste iskoristili sve dostupne kampanje."
             },
             {
                 status: 400
@@ -182,6 +205,17 @@ export async function POST() {
 
         });
 
+
+
+
+    console.log("PRIJE GREBANJA:", {
+        todayScratch,
+        extraScratches: user.extraScratches
+    });
+
+
+
+
     if (todayScratch && user.extraScratches > 0) {
 
         await prisma.user.update({
@@ -231,6 +265,8 @@ export async function POST() {
         message: "Grebanje uspješno",
 
         discount: updatedCard.discount,
+
+        campaign: campaign.name,
 
         coupon: coupon.code,
 

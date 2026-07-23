@@ -31,15 +31,22 @@ export default function ScratchCard({
             });
 
             const data = await res.json();
+
             console.log("Scratch API response:", data);
 
-            setResult(data);
 
-            /*if (res.ok && onScratchComplete) {
-                setTimeout(() => {
-                    onScratchComplete();
-                }, 1000);
-            }*/
+            if (!res.ok) {
+
+                alert(data.error);
+
+                setLoading(false);
+
+                return;
+
+            }
+
+
+            setResult(data);
 
             setScratched(true);
 
@@ -108,6 +115,10 @@ export default function ScratchCard({
 
                             <div>
                                 POPUST
+                            </div>
+
+                            <div className="mt-2 text-sm text-purple-100">
+                                {result.campaign}
                             </div>
 
 

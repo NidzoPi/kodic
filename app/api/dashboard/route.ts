@@ -43,18 +43,39 @@ export async function GET() {
         }
     });
 
-    const canScratch = !todayScratch;
+    
 
 
     const dailyScratchAvailable = !todayScratch;
 
-    const availableCards = await prisma.scratchCard.count({
+    const availableCampaigns = await prisma.campaign.count({
         where: {
-            scratched: false
+            active: true,
+
+            scratchCards: {
+                some: {
+                    scratched: false
+                }
+            },
+
+            NOT: {
+                coupons: {
+                    some: {
+                        userId: user!.id
+                    }
+                }
+            }
         }
     });
+    const canScratch =
+        availableCampaigns > 0 &&
+    (
+        !todayScratch ||
+        user!.extraScratches > 0
+    );
 
-
+    const availableScratches =
+    (!todayScratch ? 1 : 0) + user!.extraScratches;
 
     return NextResponse.json({
 
@@ -74,7 +95,9 @@ export async function GET() {
 
         canScratch,
 
-        availableCards: availableCards,
+        availableCards: availableCampaigns,
+
+        availableScratches,
 
     });
 
