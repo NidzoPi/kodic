@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import ScratchCard from "@/app/components/ScratchCard";
@@ -174,34 +175,35 @@ export default function DashboardPage() {
             </button>
 
           </div>
+          
+            <div onClick={() => router.push("/dashboard/coupons")}
+    className="bg-white rounded-xl shadow p-6 cursor-pointer hover:shadow-lg transition">
 
-          <div className="bg-white rounded-xl shadow p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                🎁 Kuponi
+              </h2>
 
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              🎁 Kuponi
-            </h2>
+              <p className="text-3xl font-bold text-gray-500 text-gray-500 text-gray-500">
+                {data.coupons}
+              </p>
 
-            <p className="text-3xl font-bold text-gray-500 text-gray-500 text-gray-500">
-              {data.coupons}
-            </p>
-
-          </div>
-
-        </div>
-
-        <div className="mt-8">
-
-          <button
-            onClick={logout}
-            className="bg-red-600 text-white px-6 py-3 rounded-lg"
-          >
-            Odjava
-          </button>
+            </div>
 
         </div>
+
+      <div className="mt-8">
+
+        <button
+          onClick={logout}
+          className="bg-red-600 text-white px-6 py-3 rounded-lg"
+        >
+          Odjava
+        </button>
 
       </div>
 
-    </main>
+    </div>
+
+    </main >
   );
 }
