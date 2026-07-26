@@ -3,7 +3,7 @@ import { getCurrentUser } from "@/lib/auth/currentUser";
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
-
+    console.log("DASHBOARD API POZVAN");
     const currentUser = await getCurrentUser();
 
     if (!currentUser) {
@@ -37,13 +37,17 @@ export async function GET() {
     const todayScratch = await prisma.scratchCard.findFirst({
         where: {
             userId: user!.id,
-            createdAt: {
-                gte: startOfDay
-            }
+            scratched: true
         }
     });
 
-    
+    console.log("DASHBOARD TODAY SCRATCH:", todayScratch);
+
+    console.log("DASHBOARD USER SCRATCHES:",
+        user!.scratchCards
+    );
+
+
 
 
     const dailyScratchAvailable = !todayScratch;
@@ -69,13 +73,14 @@ export async function GET() {
     });
     const canScratch =
         availableCampaigns > 0 &&
-    (
-        !todayScratch ||
-        user!.extraScratches > 0
-    );
+        (
+            !todayScratch ||
+            user!.extraScratches > 0
+        );
 
     const availableScratches =
-    (!todayScratch ? 1 : 0) + user!.extraScratches;
+        (!todayScratch ? 1 : 0) + user!.extraScratches;
+
 
     return NextResponse.json({
 

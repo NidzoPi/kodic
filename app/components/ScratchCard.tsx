@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 
 type Props = {
@@ -13,143 +13,494 @@ export default function ScratchCard({
     onScratchComplete,
     onNewScratch
 }: Props) {
-    {
-
-        const [scratched, setScratched] = useState(false);
-        const [loading, setLoading] = useState(false);
-        const [result, setResult] = useState<any>(null);
 
 
-        async function scratch() {
+    const [scratched, setScratched] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [result, setResult] = useState<any>(null);
 
-            if (scratched) return;
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-            setLoading(true);
+    const [isDrawing, setIsDrawing] = useState(false);
+    const [hasScratched, setHasScratched] = useState(false);
 
-            const res = await fetch("/api/scratch", {
+    const [apiCalled, setApiCalled] = useState(false);
+
+
+
+    useEffect(() => {
+
+        const canvas = canvasRef.current;
+
+        if (!canvas) return;
+
+
+        canvas.width = 320;
+        canvas.height = 192;
+
+
+        const ctx = canvas.getContext("2d");
+
+        if (!ctx) return;
+
+
+        ctx.fillStyle = "#9ca3af";
+
+        ctx.fillRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 22px Arial";
+        ctx.textAlign = "center";
+
+        ctx.fillText(
+            "OGREBI OVDE 🎁",
+            canvas.width / 2,
+            canvas.height / 2
+        );
+
+
+    }, []);
+
+    useEffect(() => {
+
+        if (!scratched && canvasRef.current) {
+
+            resetCanvas();
+
+        }
+
+    }, [scratched]);
+
+
+
+
+    async function startDrawing() {
+
+        setIsDrawing(true);
+
+
+        if (!apiCalled) {
+
+            await finishScratch();
+
+        }
+
+    }
+
+
+
+    function stopDrawing() {
+
+        setIsDrawing(false);
+
+    }
+
+
+
+    function draw(
+        e: React.MouseEvent<HTMLCanvasElement>
+    ) {
+
+
+        if (!isDrawing) return;
+
+
+        const canvas = canvasRef.current;
+
+        if (!canvas) return;
+
+
+        const ctx = canvas.getContext("2d");
+
+        if (!ctx) return;
+
+
+        const rect = canvas.getBoundingClientRect();
+
+
+        const x =
+            e.clientX - rect.left;
+
+
+        const y =
+            e.clientY - rect.top;
+
+
+
+        ctx.globalCompositeOperation =
+            "destination-out";
+
+
+
+        ctx.beginPath();
+
+
+        ctx.arc(
+            x,
+            y,
+            20,
+            0,
+            Math.PI * 2
+        );
+
+
+        ctx.fill();
+        checkScratchPercent();
+
+
+    }
+
+
+
+    async function scratch() {
+
+        if (scratched) return;
+
+
+        setLoading(true);
+
+
+        const res = await fetch(
+            "/api/scratch",
+            {
                 method: "POST"
-            });
-
-            const data = await res.json();
-
-            console.log("Scratch API response:", data);
-
-
-            if (!res.ok) {
-
-                alert(data.error);
-
-                setLoading(false);
-
-                return;
-
             }
+        );
 
 
-            setResult(data);
+        // const data = await res.json();
+        let data;
 
-            setScratched(true);
+        try {
+
+            data = await res.json();
+
+        } catch (error) {
+
+            console.error("API nije vratio JSON");
+
+            alert("Greška servera");
 
             setLoading(false);
+
+            return;
+
         }
 
 
-        return (
+        if (!res.ok) {
 
-            <div className="flex justify-center">
+            alert(data.error);
 
-                <div
-                    onClick={scratch}
-                    className="
-                    relative
-                    w-80
-                    h-48
-                    rounded-2xl
-                    shadow-xl
-                    cursor-pointer
-                    overflow-hidden
-                    bg-purple-700
-                    flex
-                    items-center
-                    justify-center
-                "
-                >
+            setLoading(false);
 
-                    {!scratched && (
+            return;
 
-                        <div
-                            className="
-                            absolute
-                            inset-0
-                            bg-gray-400
-                            flex
-                            items-center
-                            justify-center
-                            text-xl
-                            font-bold
-                            text-white
-                        "
-                        >
-                            {loading
-                                ? "Grebanje..."
-                                : "OGREBI OVDE 🎁"
-                            }
-
-                        </div>
-
-                    )}
+        }
 
 
-                    {scratched && result && (
 
-                        <div
-                            className="
-        text-white
-        text-center
-        "
-                        >
+        setResult(data);
 
-                            <div className="text-4xl font-bold">
-                                {result.discount}%
-                            </div>
+        setScratched(true);
 
-                            <div>
-                                POPUST
-                            </div>
+        setLoading(false);
 
-                            <div className="mt-2 text-sm text-purple-100">
-                                {result.campaign}
-                            </div>
+        console.log("Pozivam refresh dashboarda");
+
+        if (onScratchComplete) {
+
+            await onScratchComplete();
+
+        }
+
+    }
+
+    function checkScratchPercent() {
+
+        const canvas = canvasRef.current;
+
+        if (!canvas) return;
 
 
-                            <button
-                                onClick={() => {
-                                    setResult(null);
-                                    setScratched(false);
-                                    onScratchComplete?.();
-                                }}
-                                className="
-        mt-6
-        bg-purple-600
-        text-white
-        px-6
-        py-3
-        rounded-lg
-        font-bold
+        const ctx = canvas.getContext("2d");
+
+        if (!ctx) return;
+
+
+        const pixels = ctx.getImageData(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+
+        let transparent = 0;
+
+
+        for (
+            let i = 3;
+            i < pixels.data.length;
+            i += 4
+        ) {
+
+            if (pixels.data[i] === 0) {
+                transparent++;
+            }
+
+        }
+
+
+        const total =
+            canvas.width *
+            canvas.height;
+
+
+        const percent =
+            (transparent / total) * 100;
+
+
+        /*console.log(
+            "Oguljeno:",
+            percent.toFixed(2),
+            "%"
+        );*/
+
+
+        if (
+            percent > 60 &&
+            !hasScratched
+        ) {
+
+            setHasScratched(true);
+
+            setScratched(true);
+
+
+            if (onScratchComplete) {
+
+                onScratchComplete();
+
+            }
+
+        }
+        // console.log("Dovoljno ogrebano:", percent > 60);
+
+    }
+
+    async function finishScratch() {
+
+        if (apiCalled) return;
+
+
+        setApiCalled(true);
+
+
+        setLoading(true);
+
+
+        const res = await fetch(
+            "/api/scratch",
+            {
+                method: "POST"
+            }
+        );
+
+
+        const data = await res.json();
+
+
+        if (!res.ok) {
+
+            alert(data.error);
+
+            setLoading(false);
+
+            setApiCalled(false);
+
+            return;
+
+        }
+
+
+        // odmah prikaži nagradu ispod canvasa
+        setResult(data);
+
+
+        setLoading(false);
+
+    }
+
+    function resetCanvas() {
+
+        const canvas = canvasRef.current;
+
+        if (!canvas) return;
+
+        const ctx = canvas.getContext("2d");
+
+        if (!ctx) return;
+
+
+        ctx.globalCompositeOperation = "source-over";
+
+        ctx.fillStyle = "#9ca3af";
+
+        ctx.fillRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 22px Arial";
+        ctx.textAlign = "center";
+
+        ctx.fillText(
+            "OGREBI OVDE 🎁",
+            canvas.width / 2,
+            canvas.height / 2
+        );
+
+    }
+
+
+
+
+
+    return (
+
+        <div
+            className="
+            relative
+            w-80
+            h-48
+            rounded-2xl
+            overflow-hidden
+            shadow-xl
+            "
+        >
+
+
+
+            {/* REZULTAT ISPOD */}
+
+            <div
+                className="
+    absolute
+    inset-0
+    bg-purple-700
+    flex
+    items-center
+    justify-center
+    text-white
+    z-0
     "
-                            >
-                                NOVO GREBANJE
-                            </button>
+            >
 
 
+
+
+                {result && (
+
+                    <div className="text-center">
+
+                        <div className="text-4xl font-bold">
+                            {result.discount}%
                         </div>
 
-                    )}
+                        <div>
+                            POPUST
+                        </div>
+                        <div className="mt-2 text-lg font-semibold">
+                            {result.campaign}
+                        </div>
 
-                </div>
+
+                        <button
+                            onClick={() => {
+
+                                setResult(null);
+
+                                setScratched(false);
+
+                                setApiCalled(false);
+
+                                setHasScratched(false);
+
+                                if (onNewScratch) {
+                                    onNewScratch();
+                                }
+
+                            }}
+                            className="
+            mt-4
+            bg-white
+            text-purple-700
+            font-bold
+            px-5
+            py-2
+            rounded-lg
+            "
+                        >
+                            ZAGREBI OPET
+                        </button>
+
+                    </div>
+
+                )}
+
+
 
             </div>
 
-        );
-    }
+
+
+
+
+            {/* CANVAS PREMAZ */}
+
+
+            {!scratched && (
+
+                <canvas
+
+                    ref={canvasRef}
+
+
+                    onMouseDown={startDrawing}
+
+                    onMouseMove={draw}
+
+                    onMouseUp={stopDrawing}
+
+                    onMouseLeave={stopDrawing}
+
+
+                    className="
+                    absolute
+                    inset-0
+                    cursor-pointer
+                    z-10
+                    "
+
+                />
+
+            )}
+
+
+
+        </div>
+
+    );
+
 }

@@ -41,7 +41,13 @@ export async function POST() {
         );
 
     }
+
+
+
+    // PROVJERA DNEVNOG GREBANJA
+
     const startOfDay = new Date();
+
     startOfDay.setHours(0, 0, 0, 0);
 
 
@@ -50,12 +56,17 @@ export async function POST() {
 
             where: {
                 userId: user.id,
-                createdAt: {
-                    gte: startOfDay
-                }
+                scratched: true
             }
 
         });
+
+
+    console.log(
+        "PROVJERA TODAY SCRATCH:",
+        todayScratch
+    );
+
 
     if (todayScratch && user.extraScratches <= 0) {
 
@@ -72,45 +83,48 @@ export async function POST() {
 
 
 
-    // aktivna kampanja
+    // TRAŽENJE DOSTUPNIH KAMPANJA
 
     const campaigns =
         await prisma.campaign.findMany({
 
             where: {
+
                 active: true,
 
                 scratchCards: {
+
                     some: {
+
                         scratched: false
+
                     }
+
                 },
+
+
                 NOT: {
+
                     coupons: {
+
                         some: {
+
                             userId: user.id
+
                         }
+
                     }
+
                 }
 
             }
 
         });
-    const userCoupons = await prisma.coupon.findMany({
-        where: {
-            userId: user.id
-        },
-        select: {
-            campaignId: true
-        }
-    });
+
+
 
     console.log(
-        "Korisnik vec ima kupone:",
-        userCoupons
-    );
-    console.log(
-        "Dostupne kampanje za korisnika:",
+        "Dostupne kampanje:",
         campaigns.map(c => c.id)
     );
 
@@ -129,46 +143,40 @@ export async function POST() {
     }
 
 
+
+    // IZBOR NASUMIČNE KAMPANJE
+
+
     const campaign =
         campaigns[
-        Math.floor(Math.random() * campaigns.length)
+        Math.floor(
+            Math.random() * campaigns.length
+        )
         ];
 
 
 
-    if (!campaign) {
+    console.log(
+        "Campaign ID:",
+        campaign.id
+    );
 
-        return NextResponse.json(
-            {
-                error: "Nema aktivne kampanje",
-                debug: "campaign null"
-            },
-            {
-                status: 400
-            }
-        );
 
-    }
 
-    console.log("Campaign ID:", campaign.id);
-
-    const cards = await prisma.scratchCard.findMany({
-        where: {
-            campaignId: campaign.id,
-        },
-    });
-
-    console.log(cards);
-
+    // TRAŽENJE KARTICE
 
 
     const scratchCard =
         await prisma.scratchCard.findFirst({
 
             where: {
+
                 campaignId: campaign.id,
+
                 userId: null,
+
                 scratched: false
+
             }
 
         });
@@ -179,8 +187,7 @@ export async function POST() {
 
         return NextResponse.json(
             {
-                error: "Nema dostupnih grebanja",
-                debug: "cards empty"
+                error: "Nema dostupnih grebanja"
             },
             {
                 status: 400
@@ -189,6 +196,19 @@ export async function POST() {
 
     }
 
+
+
+    console.log(
+        "PRIJE GREBANJA:",
+        {
+            todayScratch,
+            extraScratches: user.extraScratches
+        }
+    );
+
+
+
+    // OZNAČAVANJE KARTICE KAO ISKORIŠTENE
 
 
     const updatedCard =
@@ -207,13 +227,14 @@ export async function POST() {
 
 
 
+    console.log(
+        "KREIRANA KARTICA:",
+        updatedCard
+    );
 
-    console.log("PRIJE GREBANJA:", {
-        todayScratch,
-        extraScratches: user.extraScratches
-    });
 
 
+    // TROŠENJE BONUS GREBANJA
 
 
     if (todayScratch && user.extraScratches > 0) {
@@ -221,18 +242,29 @@ export async function POST() {
         await prisma.user.update({
 
             where: {
+
                 id: user.id
+
             },
 
             data: {
+
                 extraScratches: {
+
                     decrement: 1
+
                 }
+
             }
 
         });
 
     }
+
+
+
+    // KREIRANJE KUPONA
+
 
     const coupon =
         await prisma.coupon.create({
@@ -240,17 +272,26 @@ export async function POST() {
             data: {
 
                 code:
+
                     "SCR-" +
+
                     Math.random()
+
                         .toString(36)
+
                         .substring(2, 10)
+
                         .toUpperCase(),
+
 
                 userId: user.id,
 
+
                 campaignId: campaign.id,
 
+
                 scratchCardId: updatedCard.id,
+
 
                 discount: updatedCard.discount
 

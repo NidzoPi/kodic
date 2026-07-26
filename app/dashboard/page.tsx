@@ -24,7 +24,7 @@ export default function DashboardPage() {
   const [showScratchResult, setShowScratchResult] = useState(false);
   const [data, setData] = useState<DashboardData | null>(null);
 
-  async function loadDashboard() {
+  /*async function loadDashboard() {
 
     const res = await fetch("/api/dashboard");
 
@@ -34,6 +34,26 @@ export default function DashboardPage() {
     }
 
     const dashboard = await res.json();
+    console.log("RADIM DASHBOARD REFRESH");
+
+    setData(dashboard);
+  }*/
+  async function loadDashboard() {
+
+    console.log("RADIM DASHBOARD REFRESH");
+
+    const res = await fetch("/api/dashboard", {
+      cache: "no-store"
+    });
+
+    if (!res.ok) {
+      router.push("/login");
+      return;
+    }
+
+    const dashboard = await res.json();
+
+    console.log("NOVI DASHBOARD PODACI:", dashboard);
 
     setData(dashboard);
   }
@@ -115,14 +135,22 @@ export default function DashboardPage() {
               </div>
 
 
-            ) : data.canScratch || data.extraScratches > 0 ? (
+            ) : showScratchResult ||
+              data.canScratch ||
+              data.extraScratches > 0 ? (
 
               <ScratchCard
-                onScratchComplete={async () => {
-                  await loadDashboard();
+                onScratchComplete={() => {
+
+                  setShowScratchResult(true);
+
                 }}
-                onNewScratch={() => {
+                onNewScratch={async () => {
+
+                  await loadDashboard();
+
                   setShowScratchResult(false);
+
                 }}
               />
 
@@ -175,34 +203,34 @@ export default function DashboardPage() {
             </button>
 
           </div>
-          
-            <div onClick={() => router.push("/dashboard/coupons")}
-    className="bg-white rounded-xl shadow p-6 cursor-pointer hover:shadow-lg transition">
 
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                🎁 Kuponi
-              </h2>
+          <div onClick={() => router.push("/dashboard/coupons")}
+            className="bg-white rounded-xl shadow p-6 cursor-pointer hover:shadow-lg transition">
 
-              <p className="text-3xl font-bold text-gray-500 text-gray-500 text-gray-500">
-                {data.coupons}
-              </p>
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              🎁 Kuponi
+            </h2>
 
-            </div>
+            <p className="text-3xl font-bold text-gray-500 text-gray-500 text-gray-500">
+              {data.coupons}
+            </p>
+
+          </div>
 
         </div>
 
-      <div className="mt-8">
+        <div className="mt-8">
 
-        <button
-          onClick={logout}
-          className="bg-red-600 text-white px-6 py-3 rounded-lg"
-        >
-          Odjava
-        </button>
+          <button
+            onClick={logout}
+            className="bg-red-600 text-white px-6 py-3 rounded-lg"
+          >
+            Odjava
+          </button>
+
+        </div>
 
       </div>
-
-    </div>
 
     </main >
   );
