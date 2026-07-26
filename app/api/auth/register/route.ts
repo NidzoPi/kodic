@@ -6,7 +6,7 @@ import { randomUUID } from "crypto";
 
 
 export async function POST(req: Request) {
-
+ console.log("REGISTER API POZVAN");
     try {
 
         const body = await req.json();

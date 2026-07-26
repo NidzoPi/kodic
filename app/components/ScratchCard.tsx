@@ -104,7 +104,7 @@ export default function ScratchCard({
 
 
     function draw(
-        e: React.MouseEvent<HTMLCanvasElement>
+        e: React.PointerEvent<HTMLCanvasElement>
     ) {
 
 
@@ -114,6 +114,8 @@ export default function ScratchCard({
         const canvas = canvasRef.current;
 
         if (!canvas) return;
+
+        canvas.style.touchAction = "none";
 
 
         const ctx = canvas.getContext("2d");
@@ -476,22 +478,23 @@ export default function ScratchCard({
 
                     ref={canvasRef}
 
+                    onPointerDown={startDrawing}
 
-                    onMouseDown={startDrawing}
+                    onPointerMove={draw}
 
-                    onMouseMove={draw}
+                    onPointerUp={stopDrawing}
 
-                    onMouseUp={stopDrawing}
+                    onPointerLeave={stopDrawing}
 
-                    onMouseLeave={stopDrawing}
-
+                    onPointerCancel={stopDrawing}
 
                     className="
-                    absolute
-                    inset-0
-                    cursor-pointer
-                    z-10
-                    "
+    absolute
+    inset-0
+    cursor-pointer
+    z-10
+    touch-none
+    "
 
                 />
 

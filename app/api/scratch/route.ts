@@ -56,7 +56,10 @@ export async function POST() {
 
             where: {
                 userId: user.id,
-                scratched: true
+                scratched: true,
+                scratchedAt: {
+                    gte: startOfDay
+                }
             }
 
         });
@@ -220,7 +223,8 @@ export async function POST() {
 
             data: {
                 userId: user.id,
-                scratched: true
+                scratched: true,
+                scratchedAt: new Date()
             }
 
         });

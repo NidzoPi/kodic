@@ -28,7 +28,7 @@ function RegisterForm() {
 
     setError("");
 
-
+    console.log("KREĆEM REGISTRACIJU");
     const res = await fetch(
       "/api/auth/register",
       {
@@ -45,7 +45,7 @@ function RegisterForm() {
         }),
       }
     );
-
+    console.log("REGISTER RESPONSE", res.status);
 
     const data = await res.json();
 
@@ -135,7 +135,7 @@ function RegisterForm() {
         }
 
 
-        <button
+        <button type="submit"
           className="
             bg-purple-600
             text-white

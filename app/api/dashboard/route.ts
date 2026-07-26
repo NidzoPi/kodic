@@ -37,7 +37,10 @@ export async function GET() {
     const todayScratch = await prisma.scratchCard.findFirst({
         where: {
             userId: user!.id,
-            scratched: true
+            scratched: true,
+            scratchedAt: {
+                gte: startOfDay
+            }
         }
     });
 

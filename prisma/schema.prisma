@@ -59,6 +59,7 @@ model ScratchCard {
   scratched Boolean @default(false)
 
   createdAt DateTime @default(now())
+  scratchedAt DateTime?
 }
 
 model Coupon {
