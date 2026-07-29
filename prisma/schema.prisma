@@ -41,6 +41,7 @@ model Campaign {
   createdAt     DateTime      @default(now())
   scratchCards  ScratchCard[]
   coupons       Coupon[]
+  discountType String @default("PERCENT")
 }
 
 model ScratchCard {

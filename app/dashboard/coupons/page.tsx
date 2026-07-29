@@ -12,6 +12,7 @@ type Coupon = {
 
     campaign: {
         name: string;
+        discountType: string;
         totalCoupons: number;
         _count: {
             coupons: number;
@@ -158,13 +159,19 @@ export default function CouponsPage() {
                                         my-4
                                     ">
 
-                                        {coupon.discount}%
+                                        {
+                                            coupon.campaign.discountType === "PERCENT"
+                                                ? `${coupon.discount}%`
+                                                : `${coupon.discount} KM`
+                                        }
 
                                     </div>
 
 
                                     <p className="text-gray-500">
-                                        POPUST
+                                        {coupon.campaign.discountType === "PERCENT"
+                                            ? "POPUST"
+                                            : "UŠTEDA"}
                                     </p>
 
 

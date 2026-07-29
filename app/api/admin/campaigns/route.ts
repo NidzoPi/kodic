@@ -29,6 +29,7 @@ export async function POST(req: Request) {
             name,
             description,
             discount,
+            discountType,
             totalCoupons
         } = body;
 
@@ -54,22 +55,15 @@ export async function POST(req: Request) {
         const value = Number(discount);
 
 
-        const campaign =
-            await prisma.campaign.create({
-
-                data: {
-
-                    name,
-
-                    description,
-
-                    discount: value,
-
-                    totalCoupons: amount,
-
-                }
-
-            });
+        const campaign = await prisma.campaign.create({
+            data: {
+                name,
+                description,
+                discount: Number(discount),
+                discountType,
+                totalCoupons: Number(totalCoupons)
+            }
+        });
 
 
 
@@ -209,11 +203,27 @@ export async function DELETE(req: Request) {
 
 
 
-        await prisma.campaign.delete({
-            where: {
-                id
-            }
-        });
+        await prisma.$transaction([
+
+            prisma.coupon.deleteMany({
+                where: {
+                    campaignId: id
+                }
+            }),
+
+            prisma.scratchCard.deleteMany({
+                where: {
+                    campaignId: id
+                }
+            }),
+
+            prisma.campaign.delete({
+                where: {
+                    id
+                }
+            })
+
+        ]);
 
 
 

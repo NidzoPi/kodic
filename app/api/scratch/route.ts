@@ -311,6 +311,8 @@ export async function POST() {
 
         discount: updatedCard.discount,
 
+        discountType: campaign.discountType,
+
         campaign: campaign.name,
 
         coupon: coupon.code,

@@ -13,6 +13,7 @@ export default function NewCampaignPage() {
     const [description, setDescription] = useState("");
     const [discount, setDiscount] = useState("");
     const [totalCoupons, setTotalCoupons] = useState("");
+    const [discountType, setDiscountType] = useState("PERCENT");
 
 
     async function submit(e: React.FormEvent) {
@@ -33,6 +34,7 @@ export default function NewCampaignPage() {
                 name,
                 description,
                 discount,
+                discountType,
                 totalCoupons
 
             })
@@ -74,10 +76,38 @@ export default function NewCampaignPage() {
                 onChange={e => setDescription(e.target.value)}
             />
 
+            <select
+                className="
+border
+border-gray-300
+p-2
+w-full
+mb-3
+text-gray-800
+rounded
+"
+                value={discountType}
+                onChange={e => setDiscountType(e.target.value)}
+            >
+
+                <option value="PERCENT">
+                    Popust u %
+                </option>
+
+                <option value="FIXED">
+                    Popust u KM
+                </option>
+
+            </select>
+
 
             <input
                 className="border border-gray-300 p-2 w-full mb-3 text-gray-800 placeholder:text-gray-600 rounded"
-                placeholder="Popust %"
+                placeholder={
+                    discountType === "PERCENT"
+                        ? "Popust %"
+                        : "Popust KM"
+                }
                 type="number"
                 value={discount}
                 onChange={e => setDiscount(e.target.value)}

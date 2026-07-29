@@ -417,11 +417,19 @@ export default function ScratchCard({
                     <div className="text-center">
 
                         <div className="text-4xl font-bold">
-                            {result.discount}%
+                            {
+                                result.discountType === "PERCENT"
+                                    ? `${result.discount}%`
+                                    : `${result.discount} KM`
+                            }
                         </div>
 
                         <div>
-                            POPUST
+                            {result && (
+                                result.discountType === "PERCENT"
+                                    ? "POPUST"
+                                    : "UŠTEDA"
+                            )}
                         </div>
                         <div className="mt-2 text-lg font-semibold">
                             {result.campaign}
