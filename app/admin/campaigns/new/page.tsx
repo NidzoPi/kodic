@@ -4,104 +4,112 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 
-export default function NewCampaignPage(){
+export default function NewCampaignPage() {
 
-const router = useRouter();
-
-
-const [name,setName] = useState("");
-const [description,setDescription] = useState("");
-const [discount,setDiscount] = useState("");
-const [totalCoupons,setTotalCoupons] = useState("");
+    const router = useRouter();
 
 
-async function submit(e:React.FormEvent){
-
-e.preventDefault();
-
-
-await fetch("/api/admin/campaigns",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-
-name,
-description,
-discount,
-totalCoupons
-
-})
-
-});
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [discount, setDiscount] = useState("");
+    const [totalCoupons, setTotalCoupons] = useState("");
 
 
-router.push("/admin/campaigns");
+    async function submit(e: React.FormEvent) {
 
-}
-
-
-
-return (
-
-<form
-onSubmit={submit}
-className="bg-white p-6 rounded shadow max-w-xl"
->
+        e.preventDefault();
 
 
-<h2 className="text-2xl font-bold mb-5">
-Nova kampanja
-</h2>
+        await fetch("/api/admin/campaigns", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+
+                name,
+                description,
+                discount,
+                totalCoupons
+
+            })
+
+        });
 
 
-<input
-className="border p-2 w-full mb-3"
-placeholder="Naziv"
-value={name}
-onChange={e=>setName(e.target.value)}
-/>
+        router.push("/admin/campaigns");
+
+    }
 
 
-<textarea
-className="border p-2 w-full mb-3"
-placeholder="Opis"
-value={description}
-onChange={e=>setDescription(e.target.value)}
-/>
+
+    return (
+
+        <form
+            onSubmit={submit}
+            className="bg-white p-6 rounded shadow max-w-xl"
+        >
 
 
-<input
-className="border p-2 w-full mb-3"
-placeholder="Popust %"
-type="number"
-value={discount}
-onChange={e=>setDiscount(e.target.value)}
-/>
+            <h2 className="text-3xl font-bold text-gray-800 mb-5">
+                Nova kampanja
+            </h2>
 
 
-<input
-className="border p-2 w-full mb-3"
-placeholder="Broj kodova"
-type="number"
-value={totalCoupons}
-onChange={e=>setTotalCoupons(e.target.value)}
-/>
+            <input
+                className="border border-gray-300 p-2 w-full mb-3 text-gray-800 placeholder:text-gray-600 rounded"
+                placeholder="Naziv"
+                value={name}
+                onChange={e => setName(e.target.value)}
+            />
 
 
-<button
-className="bg-black text-white px-5 py-2 rounded"
->
-Kreiraj kampanju
-</button>
+            <textarea
+                className="border border-gray-300 p-2 w-full mb-3 text-gray-800 placeholder:text-gray-600 rounded"
+                placeholder="Opis"
+                value={description}
+                onChange={e => setDescription(e.target.value)}
+            />
 
 
-</form>
+            <input
+                className="border border-gray-300 p-2 w-full mb-3 text-gray-800 placeholder:text-gray-600 rounded"
+                placeholder="Popust %"
+                type="number"
+                value={discount}
+                onChange={e => setDiscount(e.target.value)}
+            />
 
-);
+
+            <input
+                className="border border-gray-300 p-2 w-full mb-3 text-gray-800 placeholder:text-gray-600 rounded"
+                placeholder="Broj kodova"
+                type="number"
+                value={totalCoupons}
+                onChange={e => setTotalCoupons(e.target.value)}
+            />
+
+
+            <button
+                className="
+bg-gray-800
+hover:bg-gray-900
+text-white
+px-5
+py-2
+rounded
+font-semibold
+"
+            >
+                Kreiraj kampanju
+            </button>
+
+
+        </form>
+
+    );
 
 }

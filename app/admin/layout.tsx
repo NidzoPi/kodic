@@ -30,7 +30,7 @@ export default async function AdminLayout({
             <aside className="w-64 bg-black text-white p-5">
 
                 <h1 className="text-xl font-bold mb-8">
-                    ScratchWin Admin
+                    Kodić Admin
                 </h1>
 
 

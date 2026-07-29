@@ -97,7 +97,10 @@ export default function DashboardPage() {
       <div className="max-w-5xl mx-auto">
 
         <h1 className="text-4xl font-bold text-gray-400 mb-8">
-          Dobrodošao {data.name ?? "korisniče"} 👋
+          Dobrodošao po nagrade i popuste 👋
+        </h1>
+        <h1 className="text-1xl font-bold text-gray-300 mb-8">
+           Grebi i osvajaj! ~ Vaš Kodić ~
         </h1>
 
         <div className="grid md:grid-cols-2 gap-6">

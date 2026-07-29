@@ -12,6 +12,10 @@ type Coupon = {
 
     campaign: {
         name: string;
+        totalCoupons: number;
+        _count: {
+            coupons: number;
+        };
     };
 };
 
@@ -192,6 +196,25 @@ export default function CouponsPage() {
                                             .toLocaleDateString("sr-RS")}
 
                                     </p>
+                                    <div
+                                        className="
+    mt-4
+    bg-purple-50
+    rounded-lg
+    p-3
+    text-purple-700
+    font-semibold
+    "
+                                    >
+                                        🎫 Preostalo kupona:
+                                        {" "}
+                                        {coupon.campaign.totalCoupons -
+                                            coupon.campaign._count.coupons}
+                                        {" "}
+                                        /
+                                        {" "}
+                                        {coupon.campaign.totalCoupons}
+                                    </div>
 
 
                                 </div>

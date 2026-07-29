@@ -59,7 +59,7 @@ export default function ScratchCard({
         ctx.textAlign = "center";
 
         ctx.fillText(
-            "OGREBI OVDE 🎁",
+            "OGREBI OVDJE 🎁",
             canvas.width / 2,
             canvas.height / 2
         );
@@ -368,7 +368,7 @@ export default function ScratchCard({
         ctx.textAlign = "center";
 
         ctx.fillText(
-            "OGREBI OVDE 🎁",
+            "OGREBI OVDJE 🎁",
             canvas.width / 2,
             canvas.height / 2
         );

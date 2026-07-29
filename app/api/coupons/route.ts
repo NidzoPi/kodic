@@ -29,7 +29,15 @@ export async function GET() {
         },
 
         include: {
-            campaign: true
+            campaign: {
+                include: {
+                    _count: {
+                        select: {
+                            coupons: true
+                        }
+                    }
+                }
+            }
         },
 
         orderBy: {

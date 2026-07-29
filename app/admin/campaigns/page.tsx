@@ -7,8 +7,15 @@ export default async function CampaignsPage() {
 
   const campaigns =
     await prisma.campaign.findMany({
-      orderBy:{
-        createdAt:"desc"
+      include: {
+        _count: {
+          select: {
+            coupons: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: "desc"
       }
     });
 
@@ -18,7 +25,7 @@ export default async function CampaignsPage() {
 
       <div className="flex justify-between mb-6">
 
-        <h2 className="text-2xl font-bold">
+        <h2 className="text-3xl font-bold text-gray-800 mb-8">
           Kampanje
         </h2>
 
@@ -43,26 +50,26 @@ export default async function CampaignsPage() {
             className="bg-white p-5 rounded shadow"
           >
 
-            <h3 className="font-bold">
+            <h3 className="text-1xl font-bold text-gray-400">
               {campaign.name}
             </h3>
 
-            <p>
+            <p className="text-gray-400">
               Popust: {campaign.discount}%
             </p>
 
-            <p>
-              Kodovi:
+            <p className="text-gray-400">
+              Izdati kodovi:
               {" "}
-              {campaign.issuedCoupons}
+              {campaign._count.coupons}
               /
               {campaign.totalCoupons}
             </p>
 
-            <DeleteButton id={campaign.id}/>
+            <DeleteButton id={campaign.id} />
 
           </div>
-          
+
 
         ))}
 
