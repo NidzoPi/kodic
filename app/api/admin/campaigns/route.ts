@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth/requireAdmin";
+import { Prisma } from "@prisma/client";
 
 
 export async function POST(req: Request) {
@@ -30,7 +31,8 @@ export async function POST(req: Request) {
             description,
             discount,
             discountType,
-            totalCoupons
+            totalCoupons,
+            expiresAt
         } = body;
 
 
@@ -54,6 +56,8 @@ export async function POST(req: Request) {
         const amount = Number(totalCoupons);
         const value = Number(discount);
 
+       
+
 
         const campaign = await prisma.campaign.create({
             data: {
@@ -61,10 +65,10 @@ export async function POST(req: Request) {
                 description,
                 discount: Number(discount),
                 discountType,
-                totalCoupons: Number(totalCoupons)
+                totalCoupons: Number(totalCoupons),
+                expiresAt: new Date(expiresAt),
             }
         });
-
 
 
         await prisma.scratchCard.createMany({
@@ -81,8 +85,11 @@ export async function POST(req: Request) {
             )
 
         });
-
-
+const testCard = await prisma.scratchCard.findFirst({
+    where:{
+        campaignId: campaign.id
+    }
+});
 
 
         return NextResponse.json(

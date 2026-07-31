@@ -18,6 +18,9 @@ type Coupon = {
             coupons: number;
         };
     };
+
+    expiresAt: string | null;
+    redeemedAt: string | null;
 };
 
 
@@ -47,6 +50,47 @@ export default function CouponsPage() {
         setCoupons(data);
 
         setLoading(false);
+
+    }
+    function getCouponStatus(coupon: Coupon) {
+
+         console.log({
+            code: coupon.code,
+            expiresAt: coupon.expiresAt,
+            expires: coupon.expiresAt ? new Date(coupon.expiresAt) : null,
+            now: new Date(),
+            expired:
+                coupon.expiresAt
+                    ? new Date(coupon.expiresAt) < new Date()
+                    : false,
+        });
+
+        if (coupon.redeemedAt) {
+
+            return {
+                text: "ISKORIŠTEN",
+                color: "bg-green-100 text-green-700"
+            };
+
+        }
+
+
+        if (
+            coupon.expiresAt &&
+            new Date(coupon.expiresAt) < new Date()
+        ) {
+
+            return {
+                text: "ISTEKAO",
+                color: "bg-red-100 text-red-700"
+            };
+
+        }
+        return {
+            text: "AKTIVAN",
+            color: "bg-purple-100 text-purple-700"
+        };
+
 
     }
 
@@ -144,6 +188,30 @@ export default function CouponsPage() {
                                     p-6
                                     "
                                 >
+                                    {
+                                        (() => {
+
+                                            const status = getCouponStatus(coupon);
+
+                                            return (
+                                                <span
+                                                    className={`
+                    inline-block
+                    px-3
+                    py-1
+                    rounded-full
+                    text-sm
+                    font-bold
+                    ${status.color}
+                `}
+                                                >
+                                                    {status.text}
+                                                </span>
+                                            );
+
+                                        })()
+                                    }
+
 
                                     <h2 className="text-xl font-bold text-gray-900">
 
@@ -161,8 +229,8 @@ export default function CouponsPage() {
 
                                         {
                                             coupon.campaign.discountType === "PERCENT"
-                                                ? `${coupon.discount}%`
-                                                : `${coupon.discount} KM`
+                                                ? `${Number(coupon.discount).toFixed(0)}%`
+                                                : `${Number(coupon.discount).toFixed(2)} KM`
                                         }
 
                                     </div>
@@ -203,6 +271,7 @@ export default function CouponsPage() {
                                             .toLocaleDateString("sr-RS")}
 
                                     </p>
+
                                     <div
                                         className="
     mt-4
@@ -222,9 +291,8 @@ export default function CouponsPage() {
                                         {" "}
                                         {coupon.campaign.totalCoupons}
                                     </div>
-
-
                                 </div>
+
 
                             ))}
 

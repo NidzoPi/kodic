@@ -95,6 +95,17 @@ export async function POST() {
 
                 active: true,
 
+                OR: [
+                    {
+                        expiresAt: null
+                    },
+                    {
+                        expiresAt: {
+                            gt: new Date()
+                        }
+                    }
+                ],
+
                 scratchCards: {
 
                     some: {
@@ -183,7 +194,7 @@ export async function POST() {
             }
 
         });
-
+    
 
 
     if (!scratchCard) {
@@ -212,8 +223,6 @@ export async function POST() {
 
 
     // OZNAČAVANJE KARTICE KAO ISKORIŠTENE
-
-
     const updatedCard =
         await prisma.scratchCard.update({
 
@@ -228,6 +237,11 @@ export async function POST() {
             }
 
         });
+
+    console.log(
+        "UPDATED CARD:",
+        updatedCard.discount
+    );
 
 
 
@@ -268,7 +282,11 @@ export async function POST() {
 
 
     // KREIRANJE KUPONA
-
+    console.log("KOPIRANJE U COUPON:", {
+        scratchCardId: updatedCard.id,
+        scratchDiscount: updatedCard.discount,
+        type: typeof updatedCard.discount
+    });
 
     const coupon =
         await prisma.coupon.create({
@@ -277,13 +295,13 @@ export async function POST() {
 
                 code:
 
-                    "SCR-" +
+                    "KOD-" +
 
                     Math.random()
 
                         .toString(36)
 
-                        .substring(2, 10)
+                        .substring(2, 5)
 
                         .toUpperCase(),
 
@@ -297,13 +315,15 @@ export async function POST() {
                 scratchCardId: updatedCard.id,
 
 
-                discount: updatedCard.discount
+                discount: updatedCard.discount,
+
+                expiresAt: campaign.expiresAt,
 
             }
 
         });
 
-
+    console.log("SCRATCH RESPONSE DISCOUNT:", updatedCard.discount);
 
     return NextResponse.json({
 

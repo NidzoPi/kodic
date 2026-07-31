@@ -419,8 +419,8 @@ export default function ScratchCard({
                         <div className="text-4xl font-bold">
                             {
                                 result.discountType === "PERCENT"
-                                    ? `${result.discount}%`
-                                    : `${result.discount} KM`
+                                    ? `${Number(result.discount).toFixed(0)}%`
+                                    : `${Number(result.discount).toFixed(2)} KM`
                             }
                         </div>
 

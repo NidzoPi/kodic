@@ -14,7 +14,7 @@ export default function NewCampaignPage() {
     const [discount, setDiscount] = useState("");
     const [totalCoupons, setTotalCoupons] = useState("");
     const [discountType, setDiscountType] = useState("PERCENT");
-
+    const [expiresAt, setExpiresAt] = useState("");
 
     async function submit(e: React.FormEvent) {
 
@@ -35,8 +35,8 @@ export default function NewCampaignPage() {
                 description,
                 discount,
                 discountType,
-                totalCoupons
-
+                totalCoupons,
+                expiresAt
             })
 
         });
@@ -109,6 +109,7 @@ rounded
                         : "Popust KM"
                 }
                 type="number"
+                step="0.01"
                 value={discount}
                 onChange={e => setDiscount(e.target.value)}
             />
@@ -120,6 +121,15 @@ rounded
                 type="number"
                 value={totalCoupons}
                 onChange={e => setTotalCoupons(e.target.value)}
+            />
+            <label className="block mb-1 text-gray-700 font-semibold">
+                Datum isteka kampanje
+            </label>
+            <input
+                className="border border-gray-300 p-2 w-full mb-3 text-gray-800 placeholder:text-gray-600 rounded"
+                type="date"
+                value={expiresAt}
+                onChange={e => setExpiresAt(e.target.value)}
             />
 
 

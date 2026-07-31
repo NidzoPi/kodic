@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Campaign" ALTER COLUMN "discount" SET DATA TYPE DECIMAL(65,30);
+
+-- AlterTable
+ALTER TABLE "Coupon" ALTER COLUMN "discount" SET DATA TYPE DECIMAL(65,30);

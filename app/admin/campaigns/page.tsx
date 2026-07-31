@@ -56,9 +56,10 @@ export default async function CampaignsPage() {
 
             <p className="text-gray-400">
               Vrijednost:{" "}
-              {campaign.discountType === "PERCENT"
-                ? `${campaign.discount}%`
-                : `${campaign.discount} KM`
+              {
+                campaign.discountType === "PERCENT"
+                  ? `${Number(campaign.discount).toFixed(0)}%`
+                  : `${Number(campaign.discount).toFixed(2)} KM`
               }
             </p>
 

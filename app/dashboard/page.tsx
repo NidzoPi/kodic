@@ -133,7 +133,7 @@ export default function DashboardPage() {
                 </h3>
 
                 <p className="text-gray-500 mt-2">
-                  Trenutno nema dostupnih grebanja.
+                  Trenutno nema dostupnih kampanja za grebanja.
                 </p>
               </div>
 

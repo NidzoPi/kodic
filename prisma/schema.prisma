@@ -34,11 +34,12 @@ model Campaign {
   id            String        @id @default(cuid())
   name          String
   description   String?
-  discount      Int
+  discount      Decimal @db.Decimal(10,2)
   totalCoupons  Int
   issuedCoupons Int           @default(0)
   active        Boolean       @default(true)
   createdAt     DateTime      @default(now())
+  expiresAt     DateTime?
   scratchCards  ScratchCard[]
   coupons       Coupon[]
   discountType String @default("PERCENT")
@@ -53,7 +54,7 @@ model ScratchCard {
   userId String?
   user   User?   @relation(fields: [userId], references: [id])
 
-  discount Int
+  discount Decimal @db.Decimal(10,2)
 
   coupon Coupon?
 
@@ -77,9 +78,11 @@ model Coupon {
   scratchCardId String      @unique
   scratchCard   ScratchCard @relation(fields: [scratchCardId], references: [id])
 
-  discount Int
+  discount Decimal @db.Decimal(10,2)
 
   used Boolean @default(false)
 
   createdAt DateTime @default(now())
+  expiresAt DateTime?
+  redeemedAt DateTime?
 }
