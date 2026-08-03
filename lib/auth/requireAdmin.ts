@@ -29,7 +29,10 @@ export async function requireAdmin() {
   }
 
 
-  if (user.role !== Role.ADMIN) {
+  if (
+    user.role !== Role.ADMIN &&
+    user.role !== Role.CLIENT
+  ) {
     return {
       status: "FORBIDDEN" as const,
       user,

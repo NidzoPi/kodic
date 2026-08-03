@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/auth/currentUser";
 
 
 export async function POST(
@@ -19,6 +20,21 @@ export async function POST(
             },
             {
                 status: 400
+            }
+        );
+
+    }
+
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser) {
+
+        return NextResponse.json(
+            {
+                error: "Niste prijavljeni"
+            },
+            {
+                status: 401
             }
         );
 
@@ -46,6 +62,21 @@ export async function POST(
             },
             {
                 status: 404
+            }
+        );
+
+    }
+    if (
+        currentUser.role === "CLIENT" &&
+        coupon.campaign.clientId !== currentUser.clientId
+    ) {
+
+        return NextResponse.json(
+            {
+                error: "Nemate pravo koristiti ovaj kupon"
+            },
+            {
+                status: 403
             }
         );
 

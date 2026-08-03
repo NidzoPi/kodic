@@ -1,19 +1,35 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import DeleteButton from "./DeleteButton";
+import { getCurrentUser } from "@/lib/auth/currentUser";
 
 
 export default async function CampaignsPage() {
 
+  const user = await getCurrentUser();
+  if (!user) {
+    return null;
+  }
+
   const campaigns =
     await prisma.campaign.findMany({
+
+      where:
+        user.role === "ADMIN"
+          ? {}
+          : {
+            clientId: user.clientId
+          },
+
       include: {
+        client: true,
         _count: {
           select: {
             coupons: true
           }
         }
       },
+
       orderBy: {
         createdAt: "desc"
       }
@@ -23,9 +39,9 @@ export default async function CampaignsPage() {
   return (
     <div>
 
-      <div className="flex justify-between mb-6">
+      <div className="flex items-center justify-between mb-6">
 
-        <h2 className="text-3xl font-bold text-gray-800 mb-8">
+        <h2 className="text-3xl font-bold text-gray-800">
           Kampanje
         </h2>
 
@@ -50,7 +66,7 @@ export default async function CampaignsPage() {
             className="bg-white p-5 rounded shadow"
           >
 
-            <h3 className="text-1xl font-bold text-gray-400">
+            <h3 className="text-xl font-bold text-gray-400">
               {campaign.name}
             </h3>
 
@@ -70,6 +86,23 @@ export default async function CampaignsPage() {
               /
               {campaign.totalCoupons}
             </p>
+
+  
+              {
+                user.role === "ADMIN" && (
+
+                  <p className="text-gray-400">
+                    Klijent:{" "}
+                    {
+                      campaign.client
+                        ? campaign.client.name
+                        : "Interna kampanja"
+                    }
+                  </p>
+
+                )
+              }
+            
 
             <DeleteButton id={campaign.id} />
 

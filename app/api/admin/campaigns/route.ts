@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth/requireAdmin";
 import { Prisma } from "@prisma/client";
+import { getCurrentUser } from "@/lib/auth/currentUser";
 
 
 export async function POST(req: Request) {
@@ -56,7 +57,19 @@ export async function POST(req: Request) {
         const amount = Number(totalCoupons);
         const value = Number(discount);
 
-       
+        const user = await getCurrentUser();
+
+        if (!user) {
+            return NextResponse.json(
+                {
+                    error: "Niste prijavljeni"
+                },
+                {
+                    status: 401
+                }
+            );
+        }
+
 
 
         const campaign = await prisma.campaign.create({
@@ -67,6 +80,10 @@ export async function POST(req: Request) {
                 discountType,
                 totalCoupons: Number(totalCoupons),
                 expiresAt: new Date(expiresAt),
+                clientId:
+                    user.role === "CLIENT"
+                        ? user.clientId
+                        : null,
             }
         });
 
@@ -85,11 +102,11 @@ export async function POST(req: Request) {
             )
 
         });
-const testCard = await prisma.scratchCard.findFirst({
-    where:{
-        campaignId: campaign.id
-    }
-});
+        const testCard = await prisma.scratchCard.findFirst({
+            where: {
+                campaignId: campaign.id
+            }
+        });
 
 
         return NextResponse.json(
@@ -122,10 +139,11 @@ const testCard = await prisma.scratchCard.findFirst({
 }
 export async function GET() {
 
-    const admin = await requireAdmin();
+    const result = await requireAdmin();
 
 
-    if (!admin) {
+    if (result.status !== "OK") {
+
         return NextResponse.json(
             {
                 error: "Forbidden"
@@ -134,13 +152,25 @@ export async function GET() {
                 status: 403
             }
         );
+
     }
+
+
+    const user = result.user;
 
 
     try {
 
         const campaigns =
             await prisma.campaign.findMany({
+
+                where:
+                    user.role === "ADMIN"
+                        ? {}
+                        : {
+                            clientId: user.clientId
+                        },
+
 
                 orderBy: {
                     createdAt: "desc"
@@ -173,10 +203,10 @@ export async function GET() {
 }
 export async function DELETE(req: Request) {
 
-    const admin = await requireAdmin();
+    const result = await requireAdmin();
 
 
-    if (!admin) {
+    if (result.status !== "OK") {
         return NextResponse.json(
             {
                 error: "Forbidden"
@@ -195,6 +225,42 @@ export async function DELETE(req: Request) {
         const {
             id
         } = body;
+
+        const campaign =
+            await prisma.campaign.findUnique({
+                where: {
+                    id
+                }
+            });
+
+
+        if (!campaign) {
+
+            return NextResponse.json(
+                {
+                    error: "Kampanja nije pronađena"
+                },
+                {
+                    status: 404
+                }
+            );
+
+        }
+        if (
+            result.user.role === "CLIENT" &&
+            campaign.clientId !== result.user.clientId
+        ) {
+
+            return NextResponse.json(
+                {
+                    error: "Nemate pravo brisati ovu kampanju"
+                },
+                {
+                    status: 403
+                }
+            );
+
+        }
 
 
         if (!id) {

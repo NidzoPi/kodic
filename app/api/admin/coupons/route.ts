@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/auth/currentUser";
+
 
 export async function GET(request: NextRequest) {
 
@@ -32,7 +34,11 @@ export async function GET(request: NextRequest) {
 
                 user: true,
 
-                campaign: true
+                campaign: {
+                    include: {
+                        client: true
+                    }
+                }
 
             }
 
@@ -46,6 +52,24 @@ export async function GET(request: NextRequest) {
             },
             {
                 status: 404
+            }
+        );
+
+    }
+    const currentUser = await getCurrentUser();
+
+
+    if (
+        currentUser?.role === "CLIENT" &&
+        coupon.campaign.clientId !== currentUser.clientId
+    ) {
+
+        return NextResponse.json(
+            {
+                error: "Nemate pristup ovom kuponu"
+            },
+            {
+                status: 403
             }
         );
 

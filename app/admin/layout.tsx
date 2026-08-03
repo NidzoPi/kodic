@@ -21,7 +21,7 @@ export default async function AdminLayout({
     }
 
 
-    const admin = result.user;
+    const user = result.user;
 
 
     return (
@@ -52,12 +52,18 @@ export default async function AdminLayout({
                     </a>
 
 
-                    <a
-                        href="/admin/users"
-                        className="block hover:text-gray-300"
-                    >
-                        Korisnici
-                    </a>
+                    {
+                        user.role === "ADMIN" && (
+
+                            <a
+                                href="/admin/users"
+                                className="block hover:text-gray-300"
+                            >
+                                Korisnici
+                            </a>
+
+                        )
+                    }
 
 
                     <a
@@ -78,7 +84,7 @@ export default async function AdminLayout({
                 <div className="mb-5 text-sm text-gray-600">
                     Prijavljen:
                     {" "}
-                    {admin.email}
+                    {user.email}
                 </div>
 
 

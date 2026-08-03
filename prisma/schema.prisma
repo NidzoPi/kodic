@@ -8,6 +8,7 @@ datasource db {
 
 enum Role {
   USER
+  CLIENT
   ADMIN
 }
 
@@ -28,13 +29,24 @@ model User {
 
   scratchCards ScratchCard[]
   coupons      Coupon[]
+
+  clientId String?
+  client   Client? @relation(fields: [clientId], references: [id])
+}
+
+model Client {
+  id        String     @id @default(cuid())
+  name      String
+  createdAt DateTime   @default(now())
+  users     User[]
+  campaigns Campaign[]
 }
 
 model Campaign {
   id            String        @id @default(cuid())
   name          String
   description   String?
-  discount      Decimal @db.Decimal(10,2)
+  discount      Decimal       @db.Decimal(10, 2)
   totalCoupons  Int
   issuedCoupons Int           @default(0)
   active        Boolean       @default(true)
@@ -42,7 +54,10 @@ model Campaign {
   expiresAt     DateTime?
   scratchCards  ScratchCard[]
   coupons       Coupon[]
-  discountType String @default("PERCENT")
+  discountType  String        @default("PERCENT")
+
+  clientId String?
+  client   Client? @relation(fields: [clientId], references: [id])
 }
 
 model ScratchCard {
@@ -54,13 +69,13 @@ model ScratchCard {
   userId String?
   user   User?   @relation(fields: [userId], references: [id])
 
-  discount Decimal @db.Decimal(10,2)
+  discount Decimal @db.Decimal(10, 2)
 
   coupon Coupon?
 
   scratched Boolean @default(false)
 
-  createdAt DateTime @default(now())
+  createdAt   DateTime  @default(now())
   scratchedAt DateTime?
 }
 
@@ -78,11 +93,11 @@ model Coupon {
   scratchCardId String      @unique
   scratchCard   ScratchCard @relation(fields: [scratchCardId], references: [id])
 
-  discount Decimal @db.Decimal(10,2)
+  discount Decimal @db.Decimal(10, 2)
 
   used Boolean @default(false)
 
-  createdAt DateTime @default(now())
-  expiresAt DateTime?
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime?
   redeemedAt DateTime?
 }
