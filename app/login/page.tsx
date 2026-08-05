@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 
 export default function LoginPage() {
@@ -13,6 +15,9 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
 
   const [error, setError] = useState("");
+
+  const searchParams = useSearchParams();
+  const registered = searchParams.get("registered");
 
 
   async function handleSubmit(
@@ -90,6 +95,18 @@ export default function LoginPage() {
           Prijava
         </h1>
 
+        {
+          registered && (
+            <p className="
+      text-green-600
+      text-sm
+      mb-4
+    ">
+              Registracija je uspješna. Sada se prijavite.
+            </p>
+          )
+        }
+
 
 
         <input
@@ -150,6 +167,20 @@ export default function LoginPage() {
         >
           Prijavi se
         </button>
+
+        <Link
+          href="/register"
+          className="
+    block
+    text-center
+    mt-4
+    text-sm
+    text-purple-600
+    hover:underline
+  "
+        >
+          Nemate nalog? Registrujte se →
+        </Link>
 
 
       </form>

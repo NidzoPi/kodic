@@ -14,6 +14,9 @@ type Coupon = {
         name: string;
         discountType: string;
         totalCoupons: number;
+        client: {
+            name: string;
+        } | null;
         _count: {
             coupons: number;
         };
@@ -54,7 +57,7 @@ export default function CouponsPage() {
     }
     function getCouponStatus(coupon: Coupon) {
 
-         console.log({
+        console.log({
             code: coupon.code,
             expiresAt: coupon.expiresAt,
             expires: coupon.expiresAt ? new Date(coupon.expiresAt) : null,
@@ -272,6 +275,19 @@ export default function CouponsPage() {
 
                                     </p>
 
+                                    <p className="
+                                        text-sm
+                                        text-gray-400
+                                    ">
+                                        <strong>Ističe:</strong>{" "}
+                                        {
+                                            coupon.expiresAt
+                                                ? new Date(coupon.expiresAt)
+                                                    .toLocaleDateString("sr-RS")
+                                                : "-"
+                                        }
+                                    </p>
+
                                     <div
                                         className="
     mt-4
@@ -291,6 +307,10 @@ export default function CouponsPage() {
                                         {" "}
                                         {coupon.campaign.totalCoupons}
                                     </div>
+                                    <p className="text-xs text-gray-500 mt-2">
+                                        <strong>Partner:</strong>{" "}
+                                        {coupon.campaign.client?.name}
+                                    </p>
                                 </div>
 
 

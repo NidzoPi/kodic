@@ -31,6 +31,7 @@ export async function GET() {
         include: {
             campaign: {
                 include: {
+                    client: true,
                     _count: {
                         select: {
                             coupons: true

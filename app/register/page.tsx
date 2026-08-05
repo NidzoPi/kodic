@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import Link from "next/link";
 
 
 function RegisterForm() {
@@ -59,7 +60,8 @@ function RegisterForm() {
     }
 
 
-    router.push("/dashboard");
+    //router.push("/dashboard");
+    router.push("/login?registered=true");
 
   }
 
@@ -146,6 +148,20 @@ function RegisterForm() {
         >
           Registruj se
         </button>
+
+        <Link
+          href="/register/client"
+          className="
+    block
+    text-center
+    mt-4
+    text-sm
+    text-purple-600
+    hover:underline
+  "
+        >
+          Postani naš partner →
+        </Link>
 
 
       </form>

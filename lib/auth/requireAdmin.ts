@@ -39,6 +39,16 @@ export async function requireAdmin() {
     };
   }
 
+  if (
+    user.role === Role.CLIENT &&
+    !user.clientId
+) {
+    return {
+        status: "FORBIDDEN" as const,
+        user,
+    };
+}
+
 
   return {
     status: "OK" as const,

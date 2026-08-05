@@ -2,8 +2,7 @@ import { requireAdmin } from "@/lib/auth/requireAdmin";
 import { redirect } from "next/navigation";
 import LogoutButton from "@/app/components/LogoutButton";
 
-
-export default async function AdminLayout({
+export default async function ClientLayout({
     children,
 }: {
     children: React.ReactNode;
@@ -25,21 +24,25 @@ export default async function AdminLayout({
     const user = result.user;
 
 
+    if (user.role !== "CLIENT") {
+        redirect("/admin");
+    }
+
+
     return (
         <div className="min-h-screen bg-gray-100 flex">
 
             <aside className="w-64 bg-black text-white p-5 flex flex-col min-h-screen">
+
                 <h1 className="text-xl font-bold mb-8">
-                    {user.role === "CLIENT"
-                        ? "Kodić Klijent"
-                        : "Kodić Admin"}
+                    Kodić Klijent
                 </h1>
 
 
                 <nav className="space-y-3">
 
                     <a
-                        href={user.role === "CLIENT" ? "/client" : "/admin"}
+                        href="/client"
                         className="block hover:text-gray-300"
                     >
                         Dashboard
@@ -54,20 +57,6 @@ export default async function AdminLayout({
                     </a>
 
 
-                    {
-                        user.role === "ADMIN" && (
-
-                            <a
-                                href="/admin/users"
-                                className="block hover:text-gray-300"
-                            >
-                                Korisnici
-                            </a>
-
-                        )
-                    }
-
-
                     <a
                         href="/admin/coupons"
                         className="block hover:text-gray-300"
@@ -75,14 +64,14 @@ export default async function AdminLayout({
                         Kuponi
                     </a>
 
-                    <div className="mt-auto pt-6">
-                        <LogoutButton />
-                    </div>
-
                 </nav>
 
-            </aside>
 
+                <div className="mt-auto pt-6">
+                    <LogoutButton />
+                </div>
+
+            </aside>
 
 
             <main className="flex-1 p-6">

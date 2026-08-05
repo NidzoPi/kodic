@@ -3,60 +3,129 @@ import { jwtVerify } from "jose";
 
 
 const secret = new TextEncoder().encode(
-  process.env.JWT_SECRET
+    process.env.JWT_SECRET
 );
 
 
 export async function middleware(
-  request: NextRequest
+    request: NextRequest
 ) {
 
-  const token =
-    request.cookies.get("token")?.value;
+
+    const token =
+        request.cookies.get("token")?.value;
 
 
-  const { pathname } = request.nextUrl;
+    const { pathname } =
+        request.nextUrl;
 
 
-  if (
-    pathname.startsWith("/dashboard")
-  ) {
 
-    if (!token) {
+    // Ako je korisnik već prijavljen
+    // ne dozvoljavamo login/register
 
-      return NextResponse.redirect(
-        new URL("/login", request.url)
-      );
+    if (
+        pathname.startsWith("/login") ||
+        pathname.startsWith("/register")
+    ) {
+
+
+        if (token) {
+
+            try {
+
+                const { payload } =
+                    await jwtVerify(
+                        token,
+                        secret
+                    );
+
+
+                if (payload.role === "ADMIN") {
+
+                    return NextResponse.redirect(
+                        new URL("/admin", request.url)
+                    );
+
+                }
+
+
+                if (payload.role === "CLIENT") {
+
+                    return NextResponse.redirect(
+                        new URL("/client", request.url)
+                    );
+
+                }
+
+
+                return NextResponse.redirect(
+                    new URL("/dashboard", request.url)
+                );
+
+
+            } catch {
+
+                // token nevažeći
+                // pustimo korisnika na login
+
+            }
+
+        }
 
     }
 
 
-    try {
 
-      await jwtVerify(
-        token,
-        secret
-      );
+    // Zaštićeni dashboard
 
-    } catch {
+    if (
+        pathname.startsWith("/dashboard")
+    ) {
 
-      return NextResponse.redirect(
-        new URL("/login", request.url)
-      );
+
+        if (!token) {
+
+            return NextResponse.redirect(
+                new URL("/login", request.url)
+            );
+
+        }
+
+
+        try {
+
+            await jwtVerify(
+                token,
+                secret
+            );
+
+
+        } catch {
+
+
+            return NextResponse.redirect(
+                new URL("/login", request.url)
+            );
+
+        }
 
     }
 
-  }
 
 
-  return NextResponse.next();
+    return NextResponse.next();
 
 }
 
 
 
 export const config = {
-  matcher: [
-    "/dashboard/:path*",
-  ],
+
+    matcher: [
+        "/dashboard/:path*",
+        "/login",
+        "/register/:path*",
+    ],
+
 };
