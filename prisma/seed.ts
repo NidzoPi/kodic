@@ -16,7 +16,7 @@ async function main() {
   // brišemo stare test podatke
   await prisma.scratchCard.deleteMany();
   await prisma.coupon.deleteMany();
-  await prisma.prize.deleteMany();
+  //await prisma.prize.deleteMany();
   await prisma.campaign.deleteMany();
   await prisma.user.deleteMany();
 
