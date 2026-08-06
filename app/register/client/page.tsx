@@ -85,16 +85,21 @@ export default function ClientRegisterPage() {
             >
 
                 <h1 className="
-                    text-2xl
-                    font-bold
-                    mb-6
+                    text-2xl font-bold mb-6 text-gray-700
                 ">
                     Postani naš partner
                 </h1>
 
 
                 <input
-                    className="border p-2 w-full mb-3"
+                    className="border
+    border-gray-300
+    text-gray-700
+    placeholder:text-gray-400
+    p-2
+    w-full
+    mb-3
+    rounded"
                     placeholder="Naziv firme / radnje"
                     value={companyName}
                     onChange={
@@ -104,7 +109,14 @@ export default function ClientRegisterPage() {
 
 
                 <input
-                    className="border p-2 w-full mb-3"
+                    className="border
+    border-gray-300
+    text-gray-700
+    placeholder:text-gray-400
+    p-2
+    w-full
+    mb-3
+    rounded"
                     placeholder="Ime odgovorne osobe"
                     value={name}
                     onChange={
@@ -114,7 +126,14 @@ export default function ClientRegisterPage() {
 
 
                 <input
-                    className="border p-2 w-full mb-3"
+                    className="border
+    border-gray-300
+    text-gray-700
+    placeholder:text-gray-400
+    p-2
+    w-full
+    mb-3
+    rounded"
                     placeholder="Email"
                     type="email"
                     value={email}
@@ -125,7 +144,14 @@ export default function ClientRegisterPage() {
 
 
                 <input
-                    className="border p-2 w-full mb-3"
+                    className="border
+    border-gray-300
+    text-gray-500
+    placeholder:text-gray-400
+    p-2
+    w-full
+    mb-3
+    rounded"
                     placeholder="Lozinka"
                     type="password"
                     value={password}

@@ -89,9 +89,7 @@ function LoginForm() {
 
 
         <h1 className="
-          text-2xl
-          font-bold
-          mb-6
+          text-2xl font-bold mb-6 text-gray-700
         ">
           Prijava
         </h1>
@@ -112,10 +110,14 @@ function LoginForm() {
 
         <input
           className="
-            border
-            p-2
-            w-full
-            mb-3
+             border
+    border-gray-300
+    text-gray-900
+    placeholder:text-gray-300
+    p-2
+    w-full
+    mb-3
+    rounded
           "
           placeholder="Email"
           type="email"
@@ -129,10 +131,14 @@ function LoginForm() {
 
         <input
           className="
-            border
-            p-2
-            w-full
-            mb-3
+             border
+    border-gray-300
+    text-gray-900
+    placeholder:text-gray-300
+    p-2
+    w-full
+    mb-3
+    rounded
           "
           placeholder="Lozinka"
           type="password"
@@ -176,7 +182,8 @@ function LoginForm() {
     text-center
     mt-4
     text-sm
-    text-purple-600
+    text-purple-700
+    hover:text-purple-900
     hover:underline
   "
         >
