@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import confetti from "canvas-confetti";
 
 
 type Props = {
@@ -224,6 +225,32 @@ export default function ScratchCard({
 
     }
 
+    function celebrateWin() {
+
+        confetti({
+            particleCount: 150,
+            spread: 90,
+            startVelocity: 35,
+            origin: {
+                y: 0.6,
+            },
+        });
+
+
+        setTimeout(() => {
+
+            confetti({
+                particleCount: 80,
+                spread: 120,
+                origin: {
+                    y: 0.7,
+                },
+            });
+
+        }, 300);
+
+    }
+
     function checkScratchPercent() {
 
         const canvas = canvasRef.current;
@@ -282,7 +309,7 @@ export default function ScratchCard({
         ) {
 
             setHasScratched(true);
-
+            celebrateWin();
             setScratched(true);
 
 
