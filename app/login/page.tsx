@@ -4,9 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 
-export default function LoginPage() {
+function LoginForm() {
 
   const router = useRouter();
 
@@ -190,4 +191,11 @@ export default function LoginPage() {
 
   );
 
+}
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Učitavanje...</div>}>
+      <LoginForm />
+    </Suspense>
+  );
 }
