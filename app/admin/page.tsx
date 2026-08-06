@@ -59,7 +59,7 @@ export default async function AdminPage() {
                         <div className="mt-3">
 
                             <span>
-                                Popust: {campaign.discount}%
+                                Popust: {Number(campaign.discount).toFixed(0)}%
                             </span>
 
                             <br />
