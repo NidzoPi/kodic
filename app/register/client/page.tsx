@@ -16,6 +16,8 @@ export default function ClientRegisterPage() {
 
     const [error, setError] = useState("");
 
+    const [loading, setLoading] = useState(false);
+
 
     async function handleSubmit(
         e: React.FormEvent
@@ -24,6 +26,7 @@ export default function ClientRegisterPage() {
         e.preventDefault();
 
         setError("");
+        setLoading(true);
 
 
         const res = await fetch(
@@ -50,7 +53,7 @@ export default function ClientRegisterPage() {
         if (!res.ok) {
 
             setError(data.error);
-
+            setLoading(false);
             return;
 
         }
@@ -171,15 +174,26 @@ export default function ClientRegisterPage() {
 
 
                 <button
+                    type="submit"
+                    disabled={loading}
                     className="
-                        bg-purple-600
-                        text-white
-                        w-full
-                        p-2
-                        rounded
-                    "
+    bg-purple-600
+    text-white
+    w-full
+    p-2
+    rounded
+    disabled:opacity-60
+    disabled:cursor-not-allowed
+  "
                 >
-                    Kreiraj partnerski nalog
+                    {loading ? (
+                        <span className="flex items-center justify-center gap-2">
+                            <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                            Kreiranje partnerskog naloga...
+                        </span>
+                    ) : (
+                        "Kreiraj partnerski nalog"
+                    )}
                 </button>
 
 

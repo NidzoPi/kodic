@@ -20,6 +20,8 @@ function RegisterForm() {
 
   const [error, setError] = useState("");
 
+  const [loading, setLoading] = useState(false);
+
 
   async function handleSubmit(
     e: React.FormEvent
@@ -28,6 +30,7 @@ function RegisterForm() {
     e.preventDefault();
 
     setError("");
+    setLoading(true);
 
     console.log("KREĆEM REGISTRACIJU");
     const res = await fetch(
@@ -54,7 +57,7 @@ function RegisterForm() {
     if (!res.ok) {
 
       setError(data.error);
-
+      setLoading(false);
       return;
 
     }
@@ -156,17 +159,56 @@ function RegisterForm() {
         }
 
 
-        <button type="submit"
+        <button
+          type="submit"
+          disabled={loading}
           className="
-            bg-purple-600
-            text-white
-            w-full
-            p-2
-            rounded
-          "
+    bg-purple-600
+    text-white
+    w-full
+    p-2
+    rounded
+    disabled:opacity-60
+    disabled:cursor-not-allowed
+  "
         >
-          Registruj se
+          {loading ? (
+            <span className="flex items-center justify-center gap-2">
+              <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+              Registrovanje u toku...
+            </span>
+          ) : (
+            "Registruj se"
+          )}
         </button>
+
+        <div className="flex items-center gap-3 my-5">
+          <div className="h-px bg-gray-300 flex-1" />
+          <span className="text-sm text-gray-500">ili</span>
+          <div className="h-px bg-gray-300 flex-1" />
+        </div>
+
+        <a
+          href="/api/auth/google"
+          className="
+    flex
+    items-center
+    justify-center
+    gap-3
+    w-full
+    border
+    border-gray-300
+    bg-white
+    text-gray-700
+    p-2
+    rounded
+    hover:bg-gray-50
+    transition
+  "
+        >
+          <span className="text-lg font-semibold">G</span>
+          Nastavi sa Google
+        </a>
 
         <Link
           href="/register/client"
