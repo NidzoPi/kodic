@@ -97,10 +97,10 @@ export default function DashboardPage() {
       <div className="max-w-5xl mx-auto">
 
         <h1 className="text-4xl font-bold text-gray-400 mb-8">
-          Dobrodošao po nagrade i popuste 👋
+          Vrijeme je za nagrade i popuste 🎁👋
         </h1>
         <h1 className="text-1xl font-bold text-gray-300 mb-8">
-           Grebi i osvajaj! ~ Vaš Kodić ~
+          Grebi i osvajaj! ~ Vaš Kodić ~
         </h1>
 
         <div className="grid md:grid-cols-2 gap-6">
@@ -116,6 +116,13 @@ export default function DashboardPage() {
 
             <p className="text-gray-500 mt-2">
               1 dnevno + bonus grebanja
+            </p>
+            <div className="mt-4 bg-purple-50 border border-purple-200 rounded-xl p-4"> <h3 className="font-bold text-purple-800"> 👥 Pozovi prijatelja </h3> <p className="text-sm text-purple-700 mt-1"> Svaki prijatelj koji se registruje preko Vašeg referral linka otključava Vam <strong> +1 bonus grebanje!</strong> </p> </div>
+            <p className="text-gray-500 mt-2">
+              🎯 Dostupno nagrada:{" "}
+              <strong className="text-purple-700">
+                {data.availableCards}
+              </strong>
             </p>
           </div>
 
