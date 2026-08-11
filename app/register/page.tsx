@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import Link from "next/link";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 
 function RegisterForm() {
@@ -21,6 +22,7 @@ function RegisterForm() {
   const [error, setError] = useState("");
 
   const [loading, setLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
 
 
   async function handleSubmit(
@@ -46,6 +48,7 @@ function RegisterForm() {
           email,
           password,
           referralCode,
+          turnstileToken
         }),
       }
     );
@@ -89,6 +92,7 @@ function RegisterForm() {
           w-96
         "
       >
+
 
         <h1 className="
           text-2xl font-bold mb-6 text-gray-700
@@ -224,6 +228,25 @@ function RegisterForm() {
         >
           Postani naš partner →
         </Link>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-500 mb-2">
+            🔒 Sigurnosna provjera
+          </p>
+
+          <p className="text-xs text-gray-400 mb-3">
+            Provjera služi za zaštitu registracije od botova i lažnih naloga.
+          </p>
+
+          <div className="flex justify-center">
+            <Turnstile
+              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+              onSuccess={(token) => {
+                setTurnstileToken(token);
+              }}
+            />
+          </div>
+        </div>
 
 
       </form>

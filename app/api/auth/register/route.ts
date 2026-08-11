@@ -6,7 +6,7 @@ import { randomUUID } from "crypto";
 
 
 export async function POST(req: Request) {
- console.log("REGISTER API POZVAN");
+    console.log("REGISTER API POZVAN");
     try {
 
         const body = await req.json();
@@ -15,7 +15,8 @@ export async function POST(req: Request) {
             name,
             email,
             password,
-            referralCode
+            referralCode,
+            turnstileToken
         } = body;
 
 
@@ -50,6 +51,42 @@ export async function POST(req: Request) {
                 }
             );
 
+        }
+        if (!turnstileToken) {
+            return NextResponse.json(
+                {
+                    error: "Molimo potvrdite da niste robot."
+                },
+                {
+                    status: 400
+                }
+            );
+        }
+        const turnstileResponse = await fetch(
+            "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams({
+                    secret: process.env.TURNSTILE_SECRET_KEY!,
+                    response: turnstileToken
+                })
+            }
+        );
+
+        const turnstileData = await turnstileResponse.json();
+
+        if (!turnstileData.success) {
+            return NextResponse.json(
+                {
+                    error: "CAPTCHA provjera nije uspješna. Pokušajte ponovo."
+                },
+                {
+                    status: 400
+                }
+            );
         }
 
 
