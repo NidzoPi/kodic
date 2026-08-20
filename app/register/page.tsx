@@ -81,28 +81,36 @@ function RegisterForm() {
       justify-center
       bg-gray-100
     ">
+      <div className="w-96">
+        <div className="flex justify-center mb-6">
+          <img
+            src="/Logo_Login_Registracija.png"
+            alt="Kodić"
+            className="w-40 h-auto"
+          />
+        </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="
+        <form
+          onSubmit={handleSubmit}
+          className="
           bg-white
           p-8
           rounded-xl
           shadow
           w-96
         "
-      >
+        >
 
 
-        <h1 className="
+          <h1 className="
           text-2xl font-bold mb-6 text-gray-700
         ">
-          Registracija
-        </h1>
+            Registracija
+          </h1>
 
 
-        <input
-          className=" border
+          <input
+            className=" border
     border-gray-300
     text-gray-900
     placeholder:text-gray-400
@@ -110,16 +118,16 @@ function RegisterForm() {
     w-full
     mb-3
     rounded"
-          placeholder="Ime"
-          value={name}
-          onChange={
-            e => setName(e.target.value)
-          }
-        />
+            placeholder="Ime"
+            value={name}
+            onChange={
+              e => setName(e.target.value)
+            }
+          />
 
 
-        <input
-          className=" border
+          <input
+            className=" border
     border-gray-300
     text-gray-900
     placeholder:text-gray-400
@@ -127,17 +135,17 @@ function RegisterForm() {
     w-full
     mb-3
     rounded"
-          placeholder="Email"
-          type="email"
-          value={email}
-          onChange={
-            e => setEmail(e.target.value)
-          }
-        />
+            placeholder="Email"
+            type="email"
+            value={email}
+            onChange={
+              e => setEmail(e.target.value)
+            }
+          />
 
 
-        <input
-          className=" border
+          <input
+            className=" border
     border-gray-300
     text-gray-900
     placeholder:text-gray-400
@@ -145,28 +153,28 @@ function RegisterForm() {
     w-full
     mb-3
     rounded"
-          placeholder="Lozinka"
-          type="password"
-          value={password}
-          onChange={
-            e => setPassword(e.target.value)
+            placeholder="Lozinka"
+            type="password"
+            value={password}
+            onChange={
+              e => setPassword(e.target.value)
+            }
+          />
+
+
+          {
+            error && (
+              <p className="text-red-500 mb-3">
+                {error}
+              </p>
+            )
           }
-        />
 
 
-        {
-          error && (
-            <p className="text-red-500 mb-3">
-              {error}
-            </p>
-          )
-        }
-
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="
+          <button
+            type="submit"
+            disabled={loading}
+            className="
     bg-purple-600
     text-white
     w-full
@@ -175,26 +183,26 @@ function RegisterForm() {
     disabled:opacity-60
     disabled:cursor-not-allowed
   "
-        >
-          {loading ? (
-            <span className="flex items-center justify-center gap-2">
-              <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-              Registrovanje u toku...
-            </span>
-          ) : (
-            "Registruj se"
-          )}
-        </button>
+          >
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                Registrovanje u toku...
+              </span>
+            ) : (
+              "Registruj se"
+            )}
+          </button>
 
-        <div className="flex items-center gap-3 my-5">
-          <div className="h-px bg-gray-300 flex-1" />
-          <span className="text-sm text-gray-500">ili</span>
-          <div className="h-px bg-gray-300 flex-1" />
-        </div>
+          <div className="flex items-center gap-3 my-5">
+            <div className="h-px bg-gray-300 flex-1" />
+            <span className="text-sm text-gray-500">ili</span>
+            <div className="h-px bg-gray-300 flex-1" />
+          </div>
 
-        <a
-          href="/api/auth/google"
-          className="
+          <a
+            href="/api/auth/google"
+            className="
     flex
     items-center
     justify-center
@@ -209,14 +217,14 @@ function RegisterForm() {
     hover:bg-gray-50
     transition
   "
-        >
-          <span className="text-lg font-semibold">G</span>
-          Nastavi sa Google
-        </a>
+          >
+            <span className="text-lg font-semibold">G</span>
+            Nastavi sa Google
+          </a>
 
-        <Link
-          href="/register/client"
-          className="
+          <Link
+            href="/register/client"
+            className="
     block
     text-center
     mt-4
@@ -225,31 +233,32 @@ function RegisterForm() {
     hover:text-purple-900
     hover:underline
   "
-        >
-          Postani naš partner →
-        </Link>
+          >
+            Postani naš partner →
+          </Link>
 
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-500 mb-2">
-            🔒 Sigurnosna provjera
-          </p>
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-500 mb-2">
+              🔒 Sigurnosna provjera
+            </p>
 
-          <p className="text-xs text-gray-400 mb-3">
-            Provjera služi za zaštitu registracije od botova i lažnih naloga.
-          </p>
+            <p className="text-xs text-gray-400 mb-3">
+              Provjera služi za zaštitu registracije od botova i lažnih naloga.
+            </p>
 
-          <div className="flex justify-center">
-            <Turnstile
-              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-              onSuccess={(token) => {
-                setTurnstileToken(token);
-              }}
-            />
+            <div className="flex justify-center">
+              <Turnstile
+                siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                onSuccess={(token) => {
+                  setTurnstileToken(token);
+                }}
+              />
+            </div>
           </div>
-        </div>
 
 
-      </form>
+        </form>
+      </div>
 
     </main>
 
