@@ -36,7 +36,7 @@ export default async function AdminLayout({
                 </h1>
 
 
-                <nav className="space-y-3">
+                <nav className="flex-1 flex flex-col space-y-3">
 
                     <a
                         href={user.role === "CLIENT" ? "/client" : "/admin"}

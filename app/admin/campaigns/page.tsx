@@ -39,16 +39,30 @@ export default async function CampaignsPage() {
   return (
     <div>
 
-      <div className="flex items-center justify-between mb-6">
+      <div className="
+  flex
+  flex-col
+  gap-3
+  mb-6
+  md:flex-row
+  md:items-center
+  md:justify-between
+">
 
         <h2 className="text-3xl font-bold text-gray-800">
           Kampanje
         </h2>
 
-
         <Link
           href="/admin/campaigns/new"
-          className="bg-black text-white px-4 py-2 rounded"
+          className="
+      bg-black
+      text-white
+      px-4
+      py-2
+      rounded
+      w-fit
+    "
         >
           Nova kampanja
         </Link>
@@ -87,22 +101,22 @@ export default async function CampaignsPage() {
               {campaign.totalCoupons}
             </p>
 
-  
-              {
-                user.role === "ADMIN" && (
 
-                  <p className="text-gray-400">
-                    Klijent:{" "}
-                    {
-                      campaign.client
-                        ? campaign.client.name
-                        : "Interna kampanja"
-                    }
-                  </p>
+            {
+              user.role === "ADMIN" && (
 
-                )
-              }
-            
+                <p className="text-gray-400">
+                  Klijent:{" "}
+                  {
+                    campaign.client
+                      ? campaign.client.name
+                      : "Interna kampanja"
+                  }
+                </p>
+
+              )
+            }
+
 
             <DeleteButton id={campaign.id} />
 

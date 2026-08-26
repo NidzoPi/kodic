@@ -21,130 +21,119 @@ export default function AdminCouponsPage() {
                     Kod kupona
                 </label>
 
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3 min-w-0">
 
                     <input
                         className="
-                            flex-1
-                            border
-                            rounded-lg
-                            px-4
-                            py-2
-                        "
+            w-full
+            min-w-0
+            border
+            rounded-lg
+            px-4
+            py-2
+        "
                         placeholder="Unesite kod..."
                         value={code}
                         onChange={(e) =>
                             setCode(e.target.value.toUpperCase())
                         }
                     />
-                    {
-                        error && (
-
-                            <p className="text-red-600 mt-4">
-
-                                {error}
-
-                            </p>
-
-                        )
-                    }
-                    {
-                        coupon && (
-
-                            <div className="mt-6 bg-white rounded-xl shadow p-6">
-                                <div
-                                    className={`
-        inline-block
-        px-3
-        py-1
-        rounded-full
-        text-sm
-        font-semibold
-        mb-4
-        ${getCouponStatus(coupon).color}
-    `}
-                                >
-                                    {getCouponStatus(coupon).text}
-                                </div>
-                                <h3 className="text-2xl font-bold mb-4">
-                                    {coupon.campaign.name}
-                                </h3>
-
-
-                                <p>
-                                    <strong>Kod:</strong> {coupon.code}
-                                </p>
-
-
-                                <p>
-                                    <strong>Korisnik:</strong>{" "}
-                                    {coupon.user?.email}
-                                </p>
-
-
-                                <p>
-                                    <strong>Popust:</strong>{" "}
-                                    {coupon.discount}
-                                    {
-                                        coupon.campaign.discountType === "FIXED"
-                                            ? " KM"
-                                            : "%"
-                                    }
-                                </p>
-
-
-                                <p>
-                                    <strong>Ističe:</strong>{" "}
-                                    {
-                                        coupon.expiresAt
-                                            ? new Date(coupon.expiresAt)
-                                                .toLocaleDateString("sr-RS")
-                                            : "-"
-                                    }
-                                </p>
-                                {
-                                    !coupon.redeemedAt && coupon.campaign.active && !(
-                                        coupon.expiresAt &&
-                                        new Date(coupon.expiresAt) < new Date()
-                                    ) && (
-
-                                        <button
-                                            onClick={redeemCoupon}
-                                            className="
-                mt-6
-                bg-green-600
-                hover:bg-green-700
-                text-white
-                px-5
-                py-2
-                rounded-lg
-                font-semibold
-            "
-                                        >
-                                            ✓ Iskoristi kupon
-                                        </button>
-
-                                    )
-                                }
-
-                            </div>
-
-                        )
-                    }
 
                     <button
                         onClick={searchCoupon}
                         className="
-        bg-black
-        text-white
-        px-6
-        rounded-lg
-    "
+            bg-black
+            text-white
+            px-6
+            py-2
+            rounded-lg
+            w-full
+            sm:w-auto
+        "
                     >
                         Pretraži
                     </button>
 
                 </div>
+
+                {error && (
+                    <p className="text-red-600 mt-4">
+                        {error}
+                    </p>
+                )}
+
+                {coupon && (
+                    <div className="mt-6 bg-white rounded-xl shadow p-6">
+
+                        <div
+                            className={`
+                inline-block
+                px-3
+                py-1
+                rounded-full
+                text-sm
+                font-semibold
+                mb-4
+                ${getCouponStatus(coupon).color}
+            `}
+                        >
+                            {getCouponStatus(coupon).text}
+                        </div>
+
+                        <h3 className="text-2xl font-bold mb-4">
+                            {coupon.campaign.name}
+                        </h3>
+
+                        <p>
+                            <strong>Kod:</strong> {coupon.code}
+                        </p>
+
+                        <p>
+                            <strong>Korisnik:</strong>{" "}
+                            {coupon.user?.email}
+                        </p>
+
+                        <p>
+                            <strong>Popust:</strong>{" "}
+                            {coupon.discount}
+                            {coupon.campaign.discountType === "FIXED"
+                                ? " KM"
+                                : "%"}
+                        </p>
+
+                        <p>
+                            <strong>Ističe:</strong>{" "}
+                            {coupon.expiresAt
+                                ? new Date(coupon.expiresAt)
+                                    .toLocaleDateString("sr-RS")
+                                : "-"}
+                        </p>
+
+                        {!coupon.redeemedAt &&
+                            coupon.campaign.active &&
+                            !(
+                                coupon.expiresAt &&
+                                new Date(coupon.expiresAt) < new Date()
+                            ) && (
+                                <button
+                                    onClick={redeemCoupon}
+                                    className="
+                        mt-6
+                        bg-green-600
+                        hover:bg-green-700
+                        text-white
+                        px-5
+                        py-2
+                        rounded-lg
+                        font-semibold
+                    "
+                                >
+                                    ✓ Iskoristi kupon
+                                </button>
+                            )}
+
+                    </div>
+                )}
 
             </div>
 
