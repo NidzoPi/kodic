@@ -32,7 +32,7 @@ export default async function ClientLayout({
     return (
         <div className="min-h-screen bg-gray-100 flex">
 
-            <aside className="w-64 bg-black text-white p-5 flex flex-col min-h-screen">
+            <aside className="w-48 md:w-64 bg-black text-white p-4 md:p-5 flex flex-col min-h-screen">
 
                 <h1 className="text-xl font-bold mb-8">
                     Kodić Klijent
