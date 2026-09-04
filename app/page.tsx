@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import InstallAppButton from "./components/InstallAppButton";
 
 export default function HomePage() {
 
@@ -109,9 +110,11 @@ export default function HomePage() {
               Registracija
             </Link>
 
+            
+
 
           </div>
-
+          
 
 
           <Link
@@ -126,6 +129,7 @@ export default function HomePage() {
           >
             Postani naš partner →
           </Link>
+          <InstallAppButton />
 
           <Image
             src="/logo.png"
