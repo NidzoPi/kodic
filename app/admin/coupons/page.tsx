@@ -2,36 +2,32 @@
 
 import { useState } from "react";
 
-
 export default function AdminCouponsPage() {
     const [coupon, setCoupon] = useState<any>(null);
     const [error, setError] = useState("");
     const [code, setCode] = useState("");
+
     return (
-
         <div className="max-w-3xl">
-
             <h2 className="text-3xl font-bold text-gray-800 mb-8">
                 Kuponi
             </h2>
 
             <div className="bg-white rounded-xl shadow p-6">
-
                 <label className="block font-semibold mb-2">
                     Kod kupona
                 </label>
 
                 <div className="flex flex-col sm:flex-row gap-3 min-w-0">
-
                     <input
                         className="
-            w-full
-            min-w-0
-            border
-            rounded-lg
-            px-4
-            py-2
-        "
+                            w-full
+                            min-w-0
+                            border
+                            rounded-lg
+                            px-4
+                            py-2
+                        "
                         placeholder="Unesite kod..."
                         value={code}
                         onChange={(e) =>
@@ -42,18 +38,17 @@ export default function AdminCouponsPage() {
                     <button
                         onClick={searchCoupon}
                         className="
-            bg-black
-            text-white
-            px-6
-            py-2
-            rounded-lg
-            w-full
-            sm:w-auto
-        "
+                            bg-black
+                            text-white
+                            px-6
+                            py-2
+                            rounded-lg
+                            w-full
+                            sm:w-auto
+                        "
                     >
                         Pretraži
                     </button>
-
                 </div>
 
                 {error && (
@@ -64,18 +59,17 @@ export default function AdminCouponsPage() {
 
                 {coupon && (
                     <div className="mt-6 bg-white rounded-xl shadow p-6">
-
                         <div
                             className={`
-                inline-block
-                px-3
-                py-1
-                rounded-full
-                text-sm
-                font-semibold
-                mb-4
-                ${getCouponStatus(coupon).color}
-            `}
+                                inline-block
+                                px-3
+                                py-1
+                                rounded-full
+                                text-sm
+                                font-semibold
+                                mb-4
+                                ${getCouponStatus(coupon).color}
+                            `}
                         >
                             {getCouponStatus(coupon).text}
                         </div>
@@ -83,6 +77,25 @@ export default function AdminCouponsPage() {
                         <h3 className="text-2xl font-bold mb-4">
                             {coupon.campaign.name}
                         </h3>
+
+                        {coupon.campaign.oldPrice != null &&
+                            coupon.campaign.newPrice != null && (
+                                <div className="flex items-center gap-3 mb-5">
+                                    <span className="text-xl font-semibold text-red-600 line-through">
+                                        {Number(
+                                            coupon.campaign.oldPrice
+                                        ).toFixed(2)}{" "}
+                                        KM
+                                    </span>
+
+                                    <span className="text-3xl font-bold text-green-600">
+                                        {Number(
+                                            coupon.campaign.newPrice
+                                        ).toFixed(2)}{" "}
+                                        KM
+                                    </span>
+                                </div>
+                            )}
 
                         <p>
                             <strong>Kod:</strong> {coupon.code}
@@ -104,8 +117,9 @@ export default function AdminCouponsPage() {
                         <p>
                             <strong>Ističe:</strong>{" "}
                             {coupon.expiresAt
-                                ? new Date(coupon.expiresAt)
-                                    .toLocaleDateString("sr-RS")
+                                ? new Date(
+                                      coupon.expiresAt
+                                  ).toLocaleDateString("sr-RS")
                                 : "-"}
                         </p>
 
@@ -118,125 +132,98 @@ export default function AdminCouponsPage() {
                                 <button
                                     onClick={redeemCoupon}
                                     className="
-                        mt-6
-                        bg-green-600
-                        hover:bg-green-700
-                        text-white
-                        px-5
-                        py-2
-                        rounded-lg
-                        font-semibold
-                    "
+                                        mt-6
+                                        bg-green-600
+                                        hover:bg-green-700
+                                        text-white
+                                        px-5
+                                        py-2
+                                        rounded-lg
+                                        font-semibold
+                                    "
                                 >
                                     ✓ Iskoristi kupon
                                 </button>
                             )}
-
                     </div>
                 )}
-
             </div>
-
         </div>
-
     );
-    async function searchCoupon() {
 
+    async function searchCoupon() {
         setError("");
         setCoupon(null);
 
-        const res =
-            await fetch(
-                "/api/admin/coupons?code=" + code
-            );
+        const res = await fetch(
+            "/api/admin/coupons?code=" + code
+        );
 
         const data = await res.json();
 
         if (!res.ok) {
-
             setError(data.error);
-
             return;
-
         }
 
         setCoupon(data);
-
     }
 
     async function redeemCoupon() {
-
         if (!coupon) return;
 
         const couponId = coupon.id;
+
         const confirmed = confirm(
             "Da li ste sigurni da želite označiti ovaj kupon kao iskorišten?"
         );
 
         if (!confirmed) return;
 
-
         const res = await fetch(
             "/api/admin/coupons/redeem",
             {
                 method: "POST",
-
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
                 },
-
                 body: JSON.stringify({
-                    id: couponId
-                })
+                    id: couponId,
+                }),
             }
         );
 
-
         const data = await res.json();
 
-
         if (!res.ok) {
-
             alert(data.error);
-
             return;
-
         }
-
 
         setCoupon(data);
-
     }
+
     function getCouponStatus(coupon: any) {
-
         if (coupon.redeemedAt) {
-
             return {
                 text: "ISKORIŠTEN",
-                color: "bg-green-100 text-green-700"
+                color: "bg-green-100 text-green-700",
             };
-
         }
-
 
         if (
             coupon.expiresAt &&
             new Date(coupon.expiresAt) < new Date()
         ) {
-
             return {
                 text: "ISTEKAO",
-                color: "bg-red-100 text-red-700"
+                color: "bg-red-100 text-red-700",
             };
-
         }
-
 
         return {
             text: "AKTIVAN",
-            color: "bg-purple-100 text-purple-700"
+            color: "bg-purple-100 text-purple-700",
         };
-
     }
-
 }
