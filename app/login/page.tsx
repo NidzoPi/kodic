@@ -61,7 +61,7 @@ function LoginForm() {
     }
 
 
-    router.push("/dashboard");
+    router.push("/#ponuda");
 
   }
 

@@ -148,7 +148,7 @@ export async function GET(req: Request) {
 
     const response =
       NextResponse.redirect(
-        `${appUrl}/dashboard`
+        `${appUrl}/#ponuda`
       );
 
 

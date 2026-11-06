@@ -17,7 +17,7 @@ model User {
   name      String?
   email     String   @unique
   password  String
-  googleId  String? @unique
+  googleId  String?  @unique
   role      Role     @default(USER)
   createdAt DateTime @default(now())
 
@@ -30,6 +30,9 @@ model User {
 
   scratchCards ScratchCard[]
   coupons      Coupon[]
+
+  giveawayParticipations GiveawayParticipation[]
+  giveawayFollows        GiveawayFollow[]
 
   clientId String?
   client   Client? @relation(fields: [clientId], references: [id])
@@ -56,7 +59,7 @@ model Campaign {
   scratchCards  ScratchCard[]
   coupons       Coupon[]
   discountType  String        @default("PERCENT")
-  
+
   oldPrice Decimal? @db.Decimal(10, 2)
   newPrice Decimal? @db.Decimal(10, 2)
 
@@ -104,4 +107,85 @@ model Coupon {
   createdAt  DateTime  @default(now())
   expiresAt  DateTime?
   redeemedAt DateTime?
+}
+
+enum GiveawayImportStatus {
+  PENDING
+  IMPORTED
+  DISMISSED
+}
+
+model Giveaway {
+  id          String    @id @default(cuid())
+  title       String
+  organizer   String
+  prize       String
+  description String?
+  rules       String?
+  originalUrl String
+  imageUrl    String?
+  startsAt    DateTime?
+  endsAt      DateTime?
+  active      Boolean   @default(true)
+
+  winnerAnnouncementUrl String?
+  winnerAnnouncedAt     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  participations GiveawayParticipation[]
+  followers      GiveawayFollow[]
+
+  sourceImport GiveawayImport?
+}
+
+model GiveawayParticipation {
+  id             String   @id @default(cuid())
+  giveawayId     String
+  userId         String
+  participatedAt DateTime @default(now())
+
+  giveaway Giveaway @relation(fields: [giveawayId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([giveawayId, userId])
+}
+
+model GiveawayFollow {
+  id           String   @id @default(cuid())
+  giveawayId   String
+  userId       String
+  notifyWinner Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  giveaway Giveaway @relation(fields: [giveawayId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([giveawayId, userId])
+}
+
+model GiveawayImport {
+  id String @id @default(cuid())
+
+  sourcePostId   String @unique
+  sourcePageId   String
+  sourcePageName String
+
+  description String?
+  imageUrl    String?
+  originalUrl String
+  publishedAt DateTime?
+
+  status GiveawayImportStatus @default(PENDING)
+
+  importedAt   DateTime  @default(now())
+  lastSyncedAt DateTime?
+  updatedAt    DateTime  @updatedAt
+
+  giveawayId String?   @unique
+  giveaway   Giveaway? @relation(fields: [giveawayId], references: [id], onDelete: SetNull)
+
+  @@index([status, importedAt])
+  @@index([sourcePageId])
 }
